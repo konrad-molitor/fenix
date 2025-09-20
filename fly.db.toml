@@ -1,0 +1,31 @@
+app = "fenix-ivdev-db"
+primary_region = "mia"
+kill_signal = "SIGINT"
+kill_timeout = "5s"
+
+[build]
+  image = "mariadb:11.4"
+
+[mounts]
+  source = "fenix_ivdev_db_data"
+  destination = "/var/lib/mysql"
+
+[env]
+  MARIADB_DATABASE = "fenix"
+  MARIADB_USER = "fenix"
+
+[[services]]
+  internal_port = 3306
+  processes = ["app"]
+  protocol = "tcp"
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  # No public ports; internal only
+  # ports = []
+
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 100
+    soft_limit = 80
