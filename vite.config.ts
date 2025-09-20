@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => {
             alias: {
                 '@': path.resolve(__dirname, 'resources/js'),
             },
+            extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
         },
         plugins: [
             laravel({
