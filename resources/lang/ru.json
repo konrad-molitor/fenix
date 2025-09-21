@@ -101,6 +101,5 @@
     "welcome.log_in": "Войти",
     "welcome.register": "Регистрация",
     "welcome.dashboard": "Панель управления",
-    "nav.repository": "Репозиторий",
-    "nav.logout": "Выйти"
+    "nav.repository": "Репозиторий"
 }

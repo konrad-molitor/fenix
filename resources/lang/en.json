@@ -101,6 +101,5 @@
     "welcome.log_in": "Log in",
     "welcome.register": "Register",
     "welcome.dashboard": "Dashboard",
-    "nav.repository": "Repository",
-    "nav.logout": "Log out"
+    "nav.repository": "Repository"
 }

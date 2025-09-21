@@ -101,6 +101,5 @@
     "welcome.log_in": "Iniciar sesión",
     "welcome.register": "Registrarse",
     "welcome.dashboard": "Panel de control",
-    "nav.repository": "Repositorio",
-    "nav.logout": "Cerrar sesión"
+    "nav.repository": "Repositorio"
 }

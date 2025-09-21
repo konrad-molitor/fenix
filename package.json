@@ -8,7 +8,8 @@
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",
-        "types": "tsc --noEmit"
+        "types": "tsc --noEmit",
+        "validate:localization": "node scripts/validate-localization.cjs"
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",
