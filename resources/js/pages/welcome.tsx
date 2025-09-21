@@ -1,9 +1,12 @@
-import { dashboard, login, register } from '@/routes/index.ts';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import { useTranslation } from '@/hooks/use-translation';
+import { dashboard, login, register } from '@/routes/index';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
+    const { t } = useTranslation();
     const ctaHref = auth.user ? dashboard() : login();
 
     return (
@@ -20,7 +23,7 @@ export default function Welcome() {
                                 href={dashboard()}
                                 className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
                             >
-                                Dashboard
+                                {t('welcome.dashboard', 'Dashboard')}
                             </Link>
                         ) : (
                             <>
@@ -28,13 +31,13 @@ export default function Welcome() {
                                     href={login()}
                                     className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
                                 >
-                                    Log in
+                                    {t('welcome.log_in', 'Log in')}
                                 </Link>
                                 <Link
                                     href={register()}
                                     className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
                                 >
-                                    Register
+                                    {t('welcome.register', 'Register')}
                                 </Link>
                             </>
                         )}
@@ -43,10 +46,12 @@ export default function Welcome() {
                 <div className="flex w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0">
                     <main className="flex w-full max-w-[335px] flex-col-reverse lg:max-w-4xl lg:flex-row">
                         <div className="flex-1 rounded-br-lg rounded-bl-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-tl-lg lg:rounded-br-none lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]">
-                            <h1 className="mb-1 font-medium">Fenix — Municipal Reporting System</h1>
+                            <h1 className="mb-1 font-medium">{t('welcome.title', 'Fenix — Municipal Reporting System')}</h1>
                             <p className="mb-2 text-[#706f6c] dark:text-[#A1A09A]">
-                                A modern platform for citizens to report municipal issues and track their
-                                resolution in one transparent lifecycle.
+                                {t(
+                                    'welcome.description',
+                                    'A modern platform for citizens to report municipal issues and track their resolution in one transparent lifecycle.',
+                                )}
                             </p>
                             <ul className="mb-4 flex flex-col lg:mb-6">
                                 <li className="relative flex items-center gap-4 py-2 before:absolute before:top-1/2 before:bottom-0 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
@@ -55,7 +60,7 @@ export default function Welcome() {
                                             <span className="h-1.5 w-1.5 rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A]" />
                                         </span>
                                     </span>
-                                    <span>Submit reports with description, category, geolocation and media.</span>
+                                    <span>{t('welcome.feature1', 'Submit reports with description, category, geolocation and media.')}</span>
                                 </li>
                                 <li className="relative flex items-center gap-4 py-2 before:absolute before:top-0 before:bottom-1/2 before:left-[0.4rem] before:border-l before:border-[#e3e3e0] dark:before:border-[#3E3E3A]">
                                     <span className="relative bg-white py-1 dark:bg-[#161615]">
@@ -63,7 +68,7 @@ export default function Welcome() {
                                             <span className="h-1.5 w-1.5 rounded-full bg-[#dbdbd7] dark:bg-[#3E3E3A]" />
                                         </span>
                                     </span>
-                                    <span>See issues on the interactive map and track their status.</span>
+                                    <span>{t('welcome.feature2', 'See issues on the interactive map and track their status.')}</span>
                                 </li>
                             </ul>
                             <ul className="flex gap-3 text-sm leading-normal">
@@ -72,19 +77,28 @@ export default function Welcome() {
                                         href={ctaHref}
                                         className="inline-block rounded-sm border border-black bg-[#1b1b18] px-5 py-1.5 text-sm leading-normal text-white hover:border-black hover:bg-black dark:border-[#eeeeec] dark:bg-[#eeeeec] dark:text-[#1C1C1A] dark:hover:border-white dark:hover:bg-white"
                                     >
-                                        Start now
+                                        {t('welcome.start_now', 'Start now')}
                                     </Link>
                                 </li>
                             </ul>
                         </div>
                         <div className="relative -mb-px aspect-[335/376] w-full shrink-0 overflow-hidden rounded-t-lg bg-[#fff2f2] lg:mb-0 lg:-ml-px lg:aspect-auto lg:w-[438px] lg:rounded-t-none lg:rounded-r-lg dark:bg-[#1D0002]">
-                            <img src="/brand-light.png" alt="Fenix brand" className="w-full max-w-none translate-y-0 opacity-100 transition-all duration-750 dark:hidden starting:translate-y-6 starting:opacity-0" />
-                            <img src="/brand-dark.png" alt="Fenix brand" className="hidden w-full max-w-none translate-y-0 opacity-100 transition-all duration-750 dark:block starting:translate-y-6 starting:opacity-0" />
+                            <img
+                                src="/brand-light.png"
+                                alt="Fenix brand"
+                                className="w-full max-w-none translate-y-0 opacity-100 transition-all duration-750 dark:hidden starting:translate-y-6 starting:opacity-0"
+                            />
+                            <img
+                                src="/brand-dark.png"
+                                alt="Fenix brand"
+                                className="hidden w-full max-w-none translate-y-0 opacity-100 transition-all duration-750 dark:block starting:translate-y-6 starting:opacity-0"
+                            />
                             <div className="absolute inset-0 rounded-t-lg shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-t-none lg:rounded-r-lg dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]" />
                         </div>
                     </main>
                 </div>
                 <div className="hidden h-14.5 lg:block"></div>
+                {!auth.user && <LanguageSwitcher />}
             </div>
         </>
     );

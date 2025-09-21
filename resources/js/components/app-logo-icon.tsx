@@ -8,22 +8,10 @@ type Props = HTMLAttributes<HTMLSpanElement> & {
 
 export default function AppLogoIcon({ className, variant = 'auto', ...rest }: Props) {
     const lightImgClass =
-        variant === 'light'
-            ? 'block'
-            : variant === 'dark'
-            ? 'hidden'
-            : variant === 'inverted'
-            ? 'hidden dark:block'
-            : 'block dark:hidden';
+        variant === 'light' ? 'block' : variant === 'dark' ? 'hidden' : variant === 'inverted' ? 'hidden dark:block' : 'block dark:hidden';
 
     const darkImgClass =
-        variant === 'dark'
-            ? 'block'
-            : variant === 'light'
-            ? 'hidden'
-            : variant === 'inverted'
-            ? 'block dark:hidden'
-            : 'hidden dark:block';
+        variant === 'dark' ? 'block' : variant === 'light' ? 'hidden' : variant === 'inverted' ? 'block dark:hidden' : 'hidden dark:block';
 
     return (
         <span {...rest} className={className}>

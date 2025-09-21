@@ -29,13 +29,31 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $validated = $request->validated();
+        
+        $user->fill($validated);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
+        
+        // Update locale cookie if locale was changed
+        if (isset($validated['locale']) && $user->wasChanged('locale')) {
+            cookie()->queue(cookie(
+                'locale',
+                $validated['locale'],
+                60 * 24 * 365, // 1 year
+                '/',
+                null,
+                null,
+                true, // HttpOnly
+                false,
+                'Lax'
+            ));
+        }
 
         return to_route('profile.edit');
     }
