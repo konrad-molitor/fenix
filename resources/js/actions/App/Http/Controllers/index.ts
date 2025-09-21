@@ -1,11 +1,11 @@
-import LocaleController from './LocaleController'
-import Settings from './Settings'
-import Auth from './Auth'
+import Auth from './Auth';
+import LocaleController from './LocaleController';
+import Settings from './Settings';
 
 const Controllers = {
     LocaleController,
     Settings,
     Auth,
-}
+};
 
-export default Controllers
+export default Controllers;

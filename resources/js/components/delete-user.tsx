@@ -15,7 +15,10 @@ export default function DeleteUser() {
 
     return (
         <div className="space-y-6">
-            <HeadingSmall title={t('settings.delete.title', 'Delete account')} description={t('settings.delete.description', 'Delete your account and all of its resources')} />
+            <HeadingSmall
+                title={t('settings.delete.title', 'Delete account')}
+                description={t('settings.delete.description', 'Delete your account and all of its resources')}
+            />
             <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
                 <div className="relative space-y-0.5 text-red-600 dark:text-red-100">
                     <p className="font-medium">{t('settings.delete.warning', 'Warning')}</p>
@@ -29,7 +32,10 @@ export default function DeleteUser() {
                     <DialogContent>
                         <DialogTitle>{t('settings.delete.confirm', 'Are you sure you want to delete your account?')}</DialogTitle>
                         <DialogDescription>
-                            {t('settings.delete.description', 'Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.')}
+                            {t(
+                                'settings.delete.description',
+                                'Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.',
+                            )}
                         </DialogDescription>
 
                         <Form
@@ -63,7 +69,7 @@ export default function DeleteUser() {
                                     <DialogFooter className="gap-2">
                                         <DialogClose asChild>
                                             <Button variant="secondary" onClick={() => resetAndClearErrors()}>
-{t('settings.delete.cancel', 'Cancel')}
+                                                {t('settings.delete.cancel', 'Cancel')}
                                             </Button>
                                         </DialogClose>
 

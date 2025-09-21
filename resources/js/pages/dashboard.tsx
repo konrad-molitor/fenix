@@ -1,13 +1,13 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import AppLayout from '@/layouts/app-layout';
 import { useTranslation } from '@/hooks/use-translation';
+import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes/index';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
 export default function Dashboard() {
     const { t } = useTranslation();
-    
+
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('nav.dashboard', 'Dashboard'),

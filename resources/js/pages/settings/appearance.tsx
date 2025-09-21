@@ -11,7 +11,7 @@ import { appearance } from '@/routes';
 
 export default function Appearance() {
     const { t } = useTranslation();
-    
+
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('breadcrumbs.appearance_settings', 'Appearance settings'),
@@ -25,7 +25,10 @@ export default function Appearance() {
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall title={t('settings.appearance.title', 'Appearance settings')} description={t('settings.appearance.update_description', "Update your account's appearance settings")} />
+                    <HeadingSmall
+                        title={t('settings.appearance.title', 'Appearance settings')}
+                        description={t('settings.appearance.update_description', "Update your account's appearance settings")}
+                    />
                     <AppearanceTabs />
                 </div>
             </SettingsLayout>

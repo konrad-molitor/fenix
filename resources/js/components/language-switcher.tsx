@@ -1,13 +1,8 @@
-import { useState } from 'react';
-import { router, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { router, usePage } from '@inertiajs/react';
 import { Languages } from 'lucide-react';
+import { useState } from 'react';
 
 interface PageProps {
     locale: string;
@@ -23,27 +18,26 @@ export function LanguageSwitcher() {
         if (newLocale === locale || isChanging) return;
 
         setIsChanging(true);
-        
+
         // Use server route to switch locale
-        router.post('/locale/switch', {
-            locale: newLocale,
-            redirect_to: window.location.pathname + window.location.search,
-        }, {
-            preserveScroll: true,
-            onFinish: () => setIsChanging(false),
-        });
+        router.post(
+            '/locale/switch',
+            {
+                locale: newLocale,
+                redirect_to: window.location.pathname + window.location.search,
+            },
+            {
+                preserveScroll: true,
+                onFinish: () => setIsChanging(false),
+            },
+        );
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50">
+        <div className="fixed right-6 bottom-6 z-50">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-10 w-10 rounded-full bg-background shadow-lg border"
-                        disabled={isChanging}
-                    >
+                    <Button variant="outline" size="icon" className="h-10 w-10 rounded-full border bg-background shadow-lg" disabled={isChanging}>
                         <Languages className="h-4 w-4" />
                         <span className="sr-only">Switch language</span>
                     </Button>
@@ -53,15 +47,11 @@ export function LanguageSwitcher() {
                         <DropdownMenuItem
                             key={code}
                             onClick={() => handleLanguageChange(code)}
-                            className={`cursor-pointer ${
-                                code === locale ? 'bg-accent' : ''
-                            }`}
+                            className={`cursor-pointer ${code === locale ? 'bg-accent' : ''}`}
                         >
-                            <span className="flex items-center justify-between w-full">
+                            <span className="flex w-full items-center justify-between">
                                 <span>{name}</span>
-                                {code === locale && (
-                                    <span className="text-xs text-muted-foreground ml-2">✓</span>
-                                )}
+                                {code === locale && <span className="ml-2 text-xs text-muted-foreground">✓</span>}
                             </span>
                         </DropdownMenuItem>
                     ))}

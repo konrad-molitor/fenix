@@ -26,7 +26,7 @@ interface AppHeaderProps {
 export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const page = usePage<SharedData>();
     const { t } = useTranslation();
-    
+
     const mainNavItems: NavItem[] = [
         {
             title: t('nav.dashboard', 'Dashboard'),

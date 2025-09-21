@@ -11,7 +11,7 @@ import AppLogo from './app-logo';
 
 export function AppSidebar() {
     const { t } = useTranslation();
-    
+
     const mainNavItems: NavItem[] = [
         {
             title: t('nav.dashboard', 'Dashboard'),
@@ -27,7 +27,7 @@ export function AppSidebar() {
             icon: Folder,
         },
     ];
-    
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

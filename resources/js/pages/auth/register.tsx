@@ -9,14 +9,17 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AuthLayout from '@/layouts/auth-layout';
 import { useTranslation } from '@/hooks/use-translation';
+import AuthLayout from '@/layouts/auth-layout';
 
 export default function Register() {
     const { t } = useTranslation();
-    
+
     return (
-        <AuthLayout title={t('auth.register.title', 'Create an account')} description={t('auth.register.description', 'Enter your details below to create your account')}>
+        <AuthLayout
+            title={t('auth.register.title', 'Create an account')}
+            description={t('auth.register.description', 'Enter your details below to create your account')}
+        >
             <Head title={t('auth.register.title', 'Register')} />
             <Form
                 {...RegisteredUserController.store.form()}
@@ -86,14 +89,14 @@ export default function Register() {
 
                             <Button type="submit" className="mt-2 w-full" tabIndex={5}>
                                 {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-{t('auth.register.submit', 'Create account')}
+                                {t('auth.register.submit', 'Create account')}
                             </Button>
                         </div>
 
                         <div className="text-center text-sm text-muted-foreground">
-{t('auth.register.already', 'Already have an account?')}{' '}
+                            {t('auth.register.already', 'Already have an account?')}{' '}
                             <TextLink href={login()} tabIndex={6}>
-{t('auth.register.log_in', 'Log in')}
+                                {t('auth.register.log_in', 'Log in')}
                             </TextLink>
                         </div>
                     </>

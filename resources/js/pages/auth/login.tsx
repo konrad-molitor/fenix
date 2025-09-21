@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AuthLayout from '@/layouts/auth-layout';
 import { useTranslation } from '@/hooks/use-translation';
+import AuthLayout from '@/layouts/auth-layout';
 import { register } from '@/routes/index';
 import { request } from '@/routes/password/index';
 import { Form, Head } from '@inertiajs/react';
@@ -20,9 +20,12 @@ interface LoginProps {
 
 export default function Login({ status, canResetPassword }: LoginProps) {
     const { t } = useTranslation();
-    
+
     return (
-        <AuthLayout title={t('auth.login.title', 'Log in to your account')} description={t('auth.login.description', 'Enter your email and password below to log in')}>
+        <AuthLayout
+            title={t('auth.login.title', 'Log in to your account')}
+            description={t('auth.login.description', 'Enter your email and password below to log in')}
+        >
             <Head title={t('auth.login.title', 'Log in')} />
 
             <Form {...AuthenticatedSessionController.store.form()} resetOnSuccess={['password']} className="flex flex-col gap-6">
@@ -49,7 +52,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                     <Label htmlFor="password">{t('auth.login.password', 'Password')}</Label>
                                     {canResetPassword && (
                                         <TextLink href={request()} className="ml-auto text-sm" tabIndex={5}>
-{t('auth.login.forgot', 'Forgot password?')}
+                                            {t('auth.login.forgot', 'Forgot password?')}
                                         </TextLink>
                                     )}
                                 </div>
@@ -72,14 +75,14 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
                             <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
                                 {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-{t('auth.login.submit', 'Log in')}
+                                {t('auth.login.submit', 'Log in')}
                             </Button>
                         </div>
 
                         <div className="text-center text-sm text-muted-foreground">
-{t('auth.login.no_account', "Don't have an account?")}{' '}
+                            {t('auth.login.no_account', "Don't have an account?")}{' '}
                             <TextLink href={register()} tabIndex={5}>
-{t('auth.login.sign_up', 'Sign up')}
+                                {t('auth.login.sign_up', 'Sign up')}
                             </TextLink>
                         </div>
                     </>

@@ -11,9 +11,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { useTranslation } from '@/hooks/use-translation';
 import { edit } from '@/routes/profile';
 
 // Breadcrumbs are defined inside the component to access translations
@@ -35,7 +35,10 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall title={t('settings.profile.title', 'Profile information')} description={t('settings.profile.description', 'Update your name and email address')} />
+                    <HeadingSmall
+                        title={t('settings.profile.title', 'Profile information')}
+                        description={t('settings.profile.description', 'Update your name and email address')}
+                    />
 
                     <Form
                         {...ProfileController.update.form()}
