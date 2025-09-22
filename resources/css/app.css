@@ -139,3 +139,32 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* Leaflet Dark Mode Support */
+:root {
+    --map-tiles-filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+/* Apply dark theme to map tiles when dark mode is active */
+.dark .map-tiles {
+    filter: var(--map-tiles-filter, none);
+}
+
+/* Ensure Leaflet attribution is visible and properly positioned */
+.leaflet-control-attribution {
+    background: rgba(255, 255, 255, 0.8) !important;
+    margin: 0 !important;
+    padding: 2px 4px !important;
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+}
+
+/* Dark theme attribution styling */
+.dark .leaflet-control-attribution {
+    background: rgba(0, 0, 0, 0.8) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.dark .leaflet-control-attribution a {
+    color: rgba(255, 255, 255, 0.9) !important;
+}

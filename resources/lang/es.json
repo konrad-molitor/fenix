@@ -104,5 +104,11 @@
     "nav.repository": "Repositorio",
     "dashboard.map": "Mapa",
     "dashboard.list": "Lista",
-    "dashboard.toggle_view": "Cambiar entre vista de mapa y lista"
+    "dashboard.toggle_view": "Cambiar entre vista de mapa y lista",
+    "map.loading": "Cargando mapa...",
+    "map.geolocation_not_supported": "La geolocalización no es compatible con su navegador",
+    "map.location_required": "Se requiere acceso a la ubicación para que el servicio funcione",
+    "map.location_error": "Error de geolocalización",
+    "map.no_location": "No se pudo obtener la ubicación",
+    "map.your_location": "Su ubicación"
 }

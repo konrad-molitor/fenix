@@ -13,19 +13,19 @@ export default function DashboardList() {
             </h1>
             <div className="flex gap-2">
                 <Button 
-                    onClick={() => success('Список успешно загружен!', 'Успех')}
+                    onClick={() => success('List loaded successfully!', 'Success')}
                     variant="default"
                 >
                     Success Toast
                 </Button>
                 <Button 
-                    onClick={() => error('Ошибка загрузки списка', 'Ошибка')}
+                    onClick={() => error('Error loading list', 'Error')}
                     variant="destructive"
                 >
                     Error Toast
                 </Button>
                 <Button 
-                    onClick={() => info('Информация о списке', 'Информация')}
+                    onClick={() => info('List information', 'Info')}
                     variant="outline"
                 >
                     Info Toast

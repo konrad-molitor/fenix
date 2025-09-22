@@ -104,5 +104,11 @@
     "nav.repository": "Repository",
     "dashboard.map": "Map",
     "dashboard.list": "List",
-    "dashboard.toggle_view": "Toggle between map and list view"
+    "dashboard.toggle_view": "Toggle between map and list view",
+    "map.loading": "Loading map...",
+    "map.geolocation_not_supported": "Geolocation is not supported by your browser",
+    "map.location_required": "Location access is required for the service to work",
+    "map.location_error": "Geolocation error",
+    "map.no_location": "Unable to get location",
+    "map.your_location": "Your location"
 }
