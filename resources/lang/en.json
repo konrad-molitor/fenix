@@ -101,5 +101,8 @@
     "welcome.log_in": "Log in",
     "welcome.register": "Register",
     "welcome.dashboard": "Dashboard",
-    "nav.repository": "Repository"
+    "nav.repository": "Repository",
+    "dashboard.map": "Map",
+    "dashboard.list": "List",
+    "dashboard.toggle_view": "Toggle between map and list view"
 }

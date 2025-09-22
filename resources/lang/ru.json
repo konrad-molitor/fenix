@@ -101,5 +101,8 @@
     "welcome.log_in": "Войти",
     "welcome.register": "Регистрация",
     "welcome.dashboard": "Панель управления",
-    "nav.repository": "Репозиторий"
+    "nav.repository": "Репозиторий",
+    "dashboard.map": "Карта",
+    "dashboard.list": "Список",
+    "dashboard.toggle_view": "Переключить между картой и списком"
 }
