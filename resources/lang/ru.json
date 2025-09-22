@@ -101,5 +101,14 @@
     "welcome.log_in": "Войти",
     "welcome.register": "Регистрация",
     "welcome.dashboard": "Панель управления",
-    "nav.repository": "Репозиторий"
+    "nav.repository": "Репозиторий",
+    "dashboard.map": "Карта",
+    "dashboard.list": "Список",
+    "dashboard.toggle_view": "Переключить между картой и списком",
+    "map.loading": "Загрузка карты...",
+    "map.geolocation_not_supported": "Геолокация не поддерживается вашим браузером",
+    "map.location_required": "Для работы сервиса необходимо разрешить доступ к геолокации",
+    "map.location_error": "Ошибка геолокации",
+    "map.no_location": "Не удалось получить местоположение",
+    "map.your_location": "Ваше местоположение"
 }

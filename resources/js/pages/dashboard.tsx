@@ -1,12 +1,17 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import { useState } from 'react';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes/index';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
+import { Switch } from '@/components/ui/switch';
+import { GlobeIcon, RowsIcon } from '@radix-ui/react-icons';
+import DashboardMap from './dashboard/map';
+import DashboardList from './dashboard/list';
 
 export default function Dashboard() {
     const { t } = useTranslation();
+    const [isMapView, setIsMapView] = useState(true);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -14,25 +19,24 @@ export default function Dashboard() {
             href: dashboard().url,
         },
     ];
+
+    const switchControl = (
+        <div className="flex items-center gap-2">
+            <GlobeIcon className={`h-4 w-4 transition-colors ${isMapView ? 'text-primary' : 'text-muted-foreground'}`} />
+            <Switch
+                variant="neutral"
+                checked={!isMapView}
+                onCheckedChange={(checked) => setIsMapView(!checked)}
+                aria-label={t('dashboard.toggle_view', 'Toggle between map and list view')}
+            />
+            <RowsIcon className={`h-4 w-4 transition-colors ${!isMapView ? 'text-primary' : 'text-muted-foreground'}`} />
+        </div>
+    );
+
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={breadcrumbs} controls={switchControl}>
             <Head title={t('nav.dashboard', 'Dashboard')} />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                </div>
-            </div>
+            {isMapView ? <DashboardMap /> : <DashboardList />}
         </AppLayout>
     );
 }
