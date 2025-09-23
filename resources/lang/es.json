@@ -136,8 +136,6 @@
     "map.attach_video": "Adjuntar video",
     "map.title": "Título",
     "map.title_placeholder": "Ingrese título (hasta 255 caracteres)",
-    "actions.cancel": "Cancelar",
-    "actions.save": "Guardar",
     "map.delete_point_title": "Eliminar Punto",
     "map.delete_point_description": "¿Está seguro de que desea eliminar este punto? Esta acción no se puede deshacer."
 }

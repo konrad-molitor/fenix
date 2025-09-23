@@ -136,8 +136,6 @@
     "map.attach_video": "Прикрепить видео",
     "map.title": "Заголовок",
     "map.title_placeholder": "Введите заголовок (до 255 символов)",
-    "actions.cancel": "Отмена",
-    "actions.save": "Сохранить",
     "map.delete_point_title": "Удалить точку",
     "map.delete_point_description": "Вы уверены, что хотите удалить эту точку? Это действие нельзя отменить."
 }

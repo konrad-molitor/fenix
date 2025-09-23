@@ -136,8 +136,6 @@
     "map.attach_video": "Attach video",
     "map.title": "Title",
     "map.title_placeholder": "Enter title (up to 255 characters)",
-    "actions.cancel": "Cancel",
-    "actions.save": "Save",
     "map.delete_point_title": "Delete Point",
     "map.delete_point_description": "Are you sure you want to delete this point? This action cannot be undone."
 }
