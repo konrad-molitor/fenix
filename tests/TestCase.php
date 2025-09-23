@@ -14,6 +14,8 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        // Avoid requiring built Vite assets during HTTP tests
+        $this->withoutVite();
         // Run migrations for the test database
         Artisan::call('migrate', ['--force' => true]);
     }

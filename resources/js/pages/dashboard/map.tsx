@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { useTranslation } from '@/hooks/use-translation';
 import { useNotification } from '@/hooks/use-notification';
@@ -144,10 +144,11 @@ export default function DashboardMap() {
 
     const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
         try {
+            const contact = import.meta.env.VITE_NOMINATIM_CONTACT || 'contact@fenix.local';
             const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}` , {
                 headers: {
                     'Accept': 'application/json',
-                    'User-Agent': 'fenix-app/1.0 (contact: example@example.com)'
+                    'User-Agent': `fenix-app/1.0 (contact: ${contact})`
                 }
             });
             if (!res.ok) throw new Error('Failed');
