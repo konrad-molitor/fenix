@@ -1,50 +1,63 @@
 name: tests
 
 on:
+  pull_request:
   push:
     branches:
-      - develop
       - main
-  pull_request:
-    branches:
-      - develop
-      - main
+      - master
 
 jobs:
-  ci:
+  php-tests:
     runs-on: ubuntu-latest
 
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: fenix_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mariadb-admin ping -h 127.0.0.1 -uroot -proot || exit 1"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
-          tools: composer:v2
-          coverage: xdebug
+          php-version: '8.4'
+          extensions: mbstring, bcmath, pdo_mysql
+          coverage: none
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
 
-      - name: Install Node Dependencies
-        run: npm ci
-
-      - name: Install Dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
-
-      - name: Build Assets
-        run: npm run build
-
-      - name: Copy Environment File
+      - name: Copy env
         run: cp .env.example .env
 
-      - name: Generate Application Key
+      - name: Generate app key
         run: php artisan key:generate
 
-      - name: Tests
-        run: ./vendor/bin/phpunit
+      - name: Wait for MariaDB
+        run: |
+          for i in {1..30}; do
+            (echo >/dev/tcp/127.0.0.1/3306) >/dev/null 2>&1 && break
+            sleep 1
+          done
+
+      - name: Run tests
+        env:
+          DB_CONNECTION: mariadb
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: fenix_test
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: vendor/bin/phpunit --colors=always

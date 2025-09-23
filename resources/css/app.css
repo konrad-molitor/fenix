@@ -2,6 +2,15 @@
 
 @plugin 'tailwindcss-animate';
 
+/* Fix z-index for dialogs over Leaflet maps */
+[data-radix-portal] {
+  z-index: 9999 !important;
+}
+
+[data-slot="dialog-content"] {
+  z-index: 9999 !important;
+}
+
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
@@ -167,4 +176,28 @@
 
 .dark .leaflet-control-attribution a {
     color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Fix dropdown menu z-index to appear above Leaflet map */
+[data-radix-popper-content-wrapper] {
+    z-index: 1100 !important;
+}
+
+/* Ensure all dropdown menus appear above Leaflet */
+[data-radix-dropdown-menu-content] {
+    z-index: 1100 !important;
+}
+
+/* Ensure tooltips appear above Leaflet */
+[data-radix-tooltip-content] {
+    z-index: 1100 !important;
+}
+
+/* Ensure toasts appear above Leaflet */
+[data-radix-toast-viewport] {
+    z-index: 1200 !important;
+}
+
+[data-radix-toast-root] {
+    z-index: 1200 !important;
 }
