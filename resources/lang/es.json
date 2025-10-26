@@ -145,5 +145,9 @@
     "map.error_file_too_large": "El tamaño del archivo debe ser menor a 5MB",
     "map.error_max_images": "Máximo 3 imágenes permitidas",
     "map.point_created_with_images": "Punto e imágenes creados exitosamente",
-    "map.error_uploading_images": "Algunas imágenes no se pudieron cargar"
+    "map.error_uploading_images": "Algunas imágenes no se pudieron cargar",
+    "map.my_location": "Mi ubicación",
+    "map.location_found": "Ubicación encontrada",
+    "map.geolocation_timeout": "Se agotó el tiempo de espera de geolocalización",
+    "map.geolocation_error": "No se pudo obtener su ubicación"
 }
