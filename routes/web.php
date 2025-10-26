@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
     
     Route::get('/api/points', [PointController::class, 'index'])->name('points.index');
+    Route::get('/api/points/list-view', [PointController::class, 'listView'])->name('points.list-view');
     Route::post('/api/points', [PointController::class, 'store'])->name('points.store');
     Route::delete('/api/points/{point}', [PointController::class, 'destroy'])->name('points.destroy');
     

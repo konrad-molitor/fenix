@@ -55,6 +55,81 @@ class PointController extends Controller
     }
 
     /**
+     * Get points in list view format within a square area around user location.
+     */
+    public function listView(Request $request)
+    {
+        $request->validate([
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'radius' => 'required|numeric|min:500|max:4000', // 500m to 4km
+            'exclude_ids' => 'nullable|array',
+            'exclude_ids.*' => 'integer',
+        ]);
+
+        $query = Point::with(['user:id,name', 'images'])
+            ->withinSquare(
+                $request->latitude,
+                $request->longitude,
+                $request->radius
+            );
+
+        // Exclude already loaded points
+        $excludeIds = $request->input('exclude_ids', []);
+        if (!empty($excludeIds) && is_array($excludeIds)) {
+            \Log::debug('List View - Excluding IDs:', [
+                'exclude_ids' => $excludeIds, 
+                'radius' => $request->radius,
+                'lat' => $request->latitude,
+                'lng' => $request->longitude,
+            ]);
+            $query->whereNotIn('id', $excludeIds);
+        } else {
+            \Log::debug('List View - No exclusions:', [
+                'radius' => $request->radius,
+                'lat' => $request->latitude,
+                'lng' => $request->longitude,
+            ]);
+        }
+
+        $points = $query->get();
+        
+        \Log::debug('List View - Query results:', [
+            'total_found' => $points->count(),
+            'point_ids' => $points->pluck('id')->toArray(),
+        ]);
+        
+        $points = $points->map(function ($point) {
+                return [
+                    'id' => $point->id,
+                    'title' => $point->title,
+                    'description' => $point->description,
+                    'address' => $point->address,
+                    'type' => $point->type,
+                    'latitude' => $point->latitude,
+                    'longitude' => $point->longitude,
+                    'user' => [
+                        'id' => $point->user->id,
+                        'name' => $point->user->name,
+                    ],
+                    'images' => $point->images->map(fn($img) => [
+                        'id' => $img->id,
+                        'url' => $img->url,
+                    ]),
+                    'is_own' => $point->user_id === Auth::id(),
+                    'created_at' => $point->created_at,
+                    'distance' => round($point->distance, 2), // Distance in meters
+                ];
+            });
+
+        return response()->json([
+            'points' => $points,
+            'radius' => $request->radius,
+            'count' => $points->count(),
+        ]);
+    }
+
+    /**
      * Store a newly created point.
      */
     public function store(Request $request)

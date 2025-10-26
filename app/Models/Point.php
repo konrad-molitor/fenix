@@ -61,6 +61,46 @@ class Point extends Model
     }
 
     /**
+     * Scope for points within radius (in meters) from a location, ordered by distance.
+     */
+    public function scopeWithinRadius($query, float $latitude, float $longitude, float $radiusMeters)
+    {
+        // Using ST_Distance_Sphere for accurate distance calculation
+        // ST_Distance_Sphere returns distance in meters
+        return $query->selectRaw('*, ST_Distance_Sphere(
+                POINT(longitude, latitude),
+                POINT(?, ?)
+            ) as distance', [$longitude, $latitude])
+            ->whereRaw('ST_Distance_Sphere(
+                POINT(longitude, latitude),
+                POINT(?, ?)
+            ) <= ?', [$longitude, $latitude, $radiusMeters])
+            ->orderBy('distance', 'asc');
+    }
+
+    /**
+     * Scope for points within a square area (in meters) from a location.
+     * The radiusMeters parameter defines distance from center to edge.
+     * Creates a square with side = radiusMeters (from center outward in all directions).
+     */
+    public function scopeWithinSquare($query, float $latitude, float $longitude, float $radiusMeters)
+    {
+        // Approximate degrees per meter (rough approximation)
+        // At equator: 1 degree latitude = ~111km, 1 degree longitude = ~111km
+        // This gets less accurate near poles, but good enough for our use case
+        $latDegrees = $radiusMeters / 111000;
+        $lngDegrees = $radiusMeters / (111000 * cos(deg2rad($latitude)));
+
+        return $query->selectRaw('*, ST_Distance_Sphere(
+                POINT(longitude, latitude),
+                POINT(?, ?)
+            ) as distance', [$longitude, $latitude])
+            ->whereBetween('latitude', [$latitude - $latDegrees, $latitude + $latDegrees])
+            ->whereBetween('longitude', [$longitude - $lngDegrees, $longitude + $lngDegrees])
+            ->orderBy('distance', 'asc');
+    }
+
+    /**
      * Boot method to automatically create location geometry.
      */
     protected static function boot()
