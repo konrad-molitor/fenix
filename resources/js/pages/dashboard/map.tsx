@@ -49,6 +49,8 @@ interface Point {
 
 // Map events are handled by extracted component
 
+const USER_LOCATION_KEY = 'fenix_user_location';
+
 export default function DashboardMap() {
     const { t } = useTranslation();
     const { error, success } = useNotification();
@@ -244,49 +246,77 @@ export default function DashboardMap() {
         }
     };
 
-    // Get user location (only once when component mounts)
+    // Set position on mount (from localStorage or default)
     useEffect(() => {
-        // Set default position (Moscow as fallback)
-        const defaultPosition = { lat: 55.7558, lng: 37.6176 };
+        const defaultPosition = { lat: -34.9039117264286, lng: -56.192105244471165 };
         
+        // Try to load saved user location
+        try {
+            const savedLocation = localStorage.getItem(USER_LOCATION_KEY);
+            if (savedLocation) {
+                const parsed = JSON.parse(savedLocation);
+                // Validate that it has lat and lng
+                if (parsed && typeof parsed.lat === 'number' && typeof parsed.lng === 'number') {
+                    setPosition(parsed);
+                    setLoading(false);
+                    return;
+                }
+            }
+        } catch (err) {
+            console.warn('Failed to load saved location:', err);
+        }
+        
+        // Fall back to default position
+        setPosition(defaultPosition);
+        setLoading(false);
+    }, []);
+
+    // Get user location (triggered by user gesture)
+    const getUserLocation = () => {
         if (!navigator.geolocation) {
-            setPosition(defaultPosition);
-            setLoading(false);
+            error(t('map.geolocation_not_supported', 'Geolocation is not supported by your browser'), t('map.error', 'Error'));
             return;
         }
 
-        // Try to get geolocation with a more reasonable timeout
         const timeoutId = setTimeout(() => {
-            // If geolocation takes too long, use default position
-            setPosition(defaultPosition);
-            setLoading(false);
+            error(t('map.geolocation_timeout', 'Geolocation request timed out'), t('map.error', 'Error'));
         }, 5000);
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 clearTimeout(timeoutId);
-                setPosition({
+                const newPosition = {
                     lat: position.coords.latitude,
                     lng: position.coords.longitude,
-                });
-                setLoading(false);
+                };
+                setPosition(newPosition);
+                
+                // Save user location to localStorage
+                try {
+                    localStorage.setItem(USER_LOCATION_KEY, JSON.stringify(newPosition));
+                } catch (err) {
+                    console.warn('Failed to save location:', err);
+                }
+                
+                // Center map on user location
+                if (mapRef.current) {
+                    mapRef.current.setView([newPosition.lat, newPosition.lng], 15);
+                }
+                
+                success(t('map.location_found', 'Location found'), t('map.success', 'Success'));
             },
             (err) => {
                 clearTimeout(timeoutId);
                 console.warn('Geolocation error:', err);
-                // Use default position instead of showing error
-                setPosition(defaultPosition);
-                setLoading(false);
+                error(t('map.geolocation_error', 'Unable to get your location'), t('map.error', 'Error'));
             },
             {
-                enableHighAccuracy: false, // Less aggressive
+                enableHighAccuracy: true,
                 timeout: 5000,
-                maximumAge: 300000, // 5 minutes
+                maximumAge: 0,
             }
         );
-
-        return () => clearTimeout(timeoutId);
-    }, []); // Remove dependencies to prevent re-triggering
+    };
 
     // Cleanup timeout on unmount
     useEffect(() => {
@@ -454,6 +484,34 @@ export default function DashboardMap() {
                     </Marker>
                 ))}
             </MapContainer>
+            
+            {/* My Location Button */}
+            <button
+                onClick={getUserLocation}
+                className="absolute bottom-28 right-4 z-[1000] flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-lg hover:bg-gray-50 transition-colors"
+                title={t('map.my_location', 'My location')}
+                aria-label={t('map.my_location', 'My location')}
+            >
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    strokeWidth={2} 
+                    stroke="currentColor" 
+                    className="h-6 w-6 text-gray-700"
+                >
+                    <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" 
+                    />
+                    <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" 
+                    />
+                </svg>
+            </button>
             
             <PointsLoadingIndicator show={pointsLoading} />
             

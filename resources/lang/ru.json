@@ -145,5 +145,9 @@
     "map.error_file_too_large": "Размер файла не должен превышать 5 МБ",
     "map.error_max_images": "Максимум 3 изображения разрешено",
     "map.point_created_with_images": "Точка и изображения успешно созданы",
-    "map.error_uploading_images": "Некоторые изображения не удалось загрузить"
+    "map.error_uploading_images": "Некоторые изображения не удалось загрузить",
+    "map.my_location": "Моя локация",
+    "map.location_found": "Местоположение найдено",
+    "map.geolocation_timeout": "Время ожидания геолокации истекло",
+    "map.geolocation_error": "Не удалось получить ваше местоположение"
 }
