@@ -41,7 +41,7 @@ class PointImage extends Model
         // For Tigris public bucket, use virtual-hosted-style URL
         // https://bucket.fly.storage.tigris.dev/key instead of https://fly.storage.tigris.dev/bucket/key
         if ($endpoint && str_contains($endpoint, 'tigris.dev')) {
-            $host = str_replace('https://', '', $endpoint);
+            $host = parse_url($endpoint, PHP_URL_HOST);
             return 'https://' . $bucket . '.' . $host . '/' . ltrim($this->key, '/');
         }
         

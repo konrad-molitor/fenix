@@ -20,8 +20,9 @@ class CheckStorageLimit
         $maxSize = config('uploads.max_total_storage_bytes');
 
         if ($totalSize >= $maxSize) {
+            $maxSizeMB = round($maxSize / 1024 / 1024);
             return response()->json([
-                'error' => 'Project storage limit reached',
+                'error' => "Storage limit of {$maxSizeMB}MB reached. Please contact support to increase quota.",
             ], 507);
         }
 

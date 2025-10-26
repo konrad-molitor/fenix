@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { Camera, Video, X, ImagePlus } from 'lucide-react';
+import { X, ImagePlus } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
+import { useNotification } from '@/hooks/use-notification';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -30,6 +31,7 @@ const eventTypes: { type: EventType; color: 'orange' | 'destructive' | 'secondar
 
 export function AddPointDialog({ open, onOpenChange, position, onGetAddress, onSave }: AddPointDialogProps) {
     const { t } = useTranslation();
+    const { error } = useNotification();
     const [selectedType, setSelectedType] = useState<EventType | null>(null);
     const [title, setTitle] = useState('');
     const [address, setAddress] = useState<string>('');
@@ -39,7 +41,7 @@ export function AddPointDialog({ open, onOpenChange, position, onGetAddress, onS
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const MAX_IMAGES = 3;
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     // Load address when dialog opens
     useEffect(() => {
@@ -75,26 +77,32 @@ export function AddPointDialog({ open, onOpenChange, position, onGetAddress, onS
         });
         
         if (errors.length > 0) {
-            alert(errors.join('\n'));
+            errors.forEach(err => error(err, t('map.error', 'Error')));
         }
 
         const remainingSlots = MAX_IMAGES - selectedImages.length;
         const filesToAdd = validFiles.slice(0, remainingSlots);
 
         if (filesToAdd.length < validFiles.length) {
-            alert(t('map.error_max_images', `Maximum ${MAX_IMAGES} images allowed`));
+            error(t('map.error_max_images', `Maximum ${MAX_IMAGES} images allowed`), t('map.error', 'Error'));
         }
 
-        const newPreviews: string[] = [];
-        filesToAdd.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                newPreviews.push(e.target?.result as string);
-                if (newPreviews.length === filesToAdd.length) {
-                    setImagePreviews(prev => [...prev, ...newPreviews]);
-                }
-            };
-            reader.readAsDataURL(file);
+        Promise.all(
+            filesToAdd.map(file => {
+                return new Promise<string>((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        resolve(e.target?.result as string);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            })
+        ).then((newPreviews) => {
+            setImagePreviews(prev => [...prev, ...newPreviews]);
+        }).catch((err) => {
+            console.error('Error reading image files:', err);
+            error(t('map.error', 'Error reading image files'), t('map.error', 'Error'));
         });
 
         setSelectedImages(prev => [...prev, ...filesToAdd]);

@@ -15,11 +15,24 @@ class ImageUploadService
 {
     private ImageManager $imageManager;
     private string $disk;
+    private S3Client $s3Client;
 
     public function __construct()
     {
         $this->imageManager = new ImageManager(new Driver());
         $this->disk = config('uploads.storage_disk');
+        
+        $diskConfig = config("filesystems.disks.{$this->disk}");
+        $this->s3Client = new S3Client([
+            'version' => 'latest',
+            'region' => $diskConfig['region'],
+            'endpoint' => $diskConfig['endpoint'],
+            'use_path_style_endpoint' => $diskConfig['use_path_style_endpoint'] ?? false,
+            'credentials' => [
+                'key' => $diskConfig['key'],
+                'secret' => $diskConfig['secret'],
+            ],
+        ]);
     }
 
     /**
@@ -53,20 +66,10 @@ class ImageUploadService
 
         $key = $this->generateKey($point->id);
 
-        $diskConfig = config("filesystems.disks.{$this->disk}");
-        $client = new S3Client([
-            'version' => 'latest',
-            'region' => $diskConfig['region'],
-            'endpoint' => $diskConfig['endpoint'],
-            'use_path_style_endpoint' => $diskConfig['use_path_style_endpoint'] ?? false,
-            'credentials' => [
-                'key' => $diskConfig['key'],
-                'secret' => $diskConfig['secret'],
-            ],
-        ]);
+        $bucket = config("filesystems.disks.{$this->disk}.bucket");
         
-        $client->putObject([
-            'Bucket' => $diskConfig['bucket'],
+        $this->s3Client->putObject([
+            'Bucket' => $bucket,
             'Key' => $key,
             'Body' => (string) $encoded,
             'ContentType' => 'image/jpeg',

@@ -7,6 +7,7 @@ use App\Models\Point;
 use App\Models\PointImage;
 use App\Services\ImageUploadService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class PointImageController extends Controller
 {
@@ -53,8 +54,15 @@ class PointImageController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
-            return response()->json([
+            Log::error('Image upload failed', [
+                'point_id' => $point->id,
+                'user_id' => $request->user()->id,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
+            return response()->json([
+                'error' => 'Failed to upload image. Please try again.',
             ], 422);
         }
     }
