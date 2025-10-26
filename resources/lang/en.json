@@ -137,5 +137,13 @@
     "map.title": "Title",
     "map.title_placeholder": "Enter title (up to 255 characters)",
     "map.delete_point_title": "Delete Point",
-    "map.delete_point_description": "Are you sure you want to delete this point? This action cannot be undone."
+    "map.delete_point_description": "Are you sure you want to delete this point? This action cannot be undone.",
+    "map.photos": "Photos",
+    "map.add_photos": "Add photos",
+    "map.error_not_image": "Only image files are allowed",
+    "map.error_wrong_format": "Only JPEG and PNG formats are allowed",
+    "map.error_file_too_large": "File size must be less than 5MB",
+    "map.error_max_images": "Maximum 3 images allowed",
+    "map.point_created_with_images": "Point and images created successfully",
+    "map.error_uploading_images": "Some images failed to upload"
 }

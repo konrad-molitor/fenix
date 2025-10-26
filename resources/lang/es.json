@@ -137,5 +137,13 @@
     "map.title": "Título",
     "map.title_placeholder": "Ingrese título (hasta 255 caracteres)",
     "map.delete_point_title": "Eliminar Punto",
-    "map.delete_point_description": "¿Está seguro de que desea eliminar este punto? Esta acción no se puede deshacer."
+    "map.delete_point_description": "¿Está seguro de que desea eliminar este punto? Esta acción no se puede deshacer.",
+    "map.photos": "Fotos",
+    "map.add_photos": "Agregar fotos",
+    "map.error_not_image": "Solo se permiten archivos de imagen",
+    "map.error_wrong_format": "Solo se permiten formatos JPEG y PNG",
+    "map.error_file_too_large": "El tamaño del archivo debe ser menor a 5MB",
+    "map.error_max_images": "Máximo 3 imágenes permitidas",
+    "map.point_created_with_images": "Punto e imágenes creados exitosamente",
+    "map.error_uploading_images": "Algunas imágenes no se pudieron cargar"
 }

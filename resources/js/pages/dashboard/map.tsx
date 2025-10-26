@@ -9,6 +9,7 @@ import { MapContextMenu } from '@/components/map/map-context-menu';
 import { MapEventHandler } from '@/components/map/map-event-handler';
 import { UserLocationMarker } from '@/components/map/user-location-marker';
 import { PointsLoadingIndicator } from '@/components/map/points-loading-indicator';
+import { ImageViewer } from '@/components/map/image-viewer';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
@@ -38,6 +39,10 @@ interface Point {
         id: number;
         name: string;
     };
+    images?: Array<{
+        id: number;
+        url: string;
+    }>;
     is_own: boolean;
     created_at: string;
 }
@@ -61,6 +66,7 @@ export default function DashboardMap() {
         position: { x: 0, y: 0 },
         coords: null
     });
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const mapRef = useRef<L.Map | null>(null);
     const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -88,6 +94,7 @@ export default function DashboardMap() {
                     }
                 });
                 
+                console.log('📍 Loaded points with images:', response.data);
                 setPoints(response.data);
             } catch (err) {
                 console.error('Error loading points:', err);
@@ -99,7 +106,7 @@ export default function DashboardMap() {
     };
 
     // Create new point
-    const createPoint = async (lat: number, lng: number, title: string, type: string, description?: string, address?: string) => {
+    const createPoint = async (lat: number, lng: number, title: string, type: string, description?: string, address?: string, images?: File[]) => {
         try {
             const response = await axios.post('/api/points', {
                 latitude: lat,
@@ -110,8 +117,51 @@ export default function DashboardMap() {
                 address: address || '',
             });
             
-            setPoints(prev => [...prev, response.data]);
-            success(t('map.point_created', 'Point created successfully'), t('map.success', 'Success'));
+            const newPoint = response.data;
+            
+            // Upload images if any
+            if (images && images.length > 0) {
+                console.log('📤 Uploading', images.length, 'images for point', newPoint.id);
+                try {
+                    const uploadResults = await Promise.all(
+                        images.map(async (image, index) => {
+                            console.log(`📤 Uploading image ${index + 1}/${images.length}:`, image.name, image.size);
+                            const formData = new FormData();
+                            formData.append('image', image);
+                            
+                            const result = await axios.post(`/api/points/${newPoint.id}/images`, formData, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data',
+                                },
+                            });
+                            console.log(`✅ Image ${index + 1} uploaded:`, result.data);
+                            return result.data.data;
+                        })
+                    );
+                    
+                    // Update point with uploaded images
+                    newPoint.images = uploadResults;
+                    console.log('✅ All images uploaded, point updated:', newPoint);
+                    success(t('map.point_created_with_images', 'Point and images created successfully'), t('map.success', 'Success'));
+                } catch (imgErr) {
+                    console.error('❌ Error uploading images:', imgErr);
+                    
+                    // Point created but images failed
+                    success(t('map.point_created', 'Point created successfully'), t('map.success', 'Success'));
+                    
+                    // Show specific error message
+                    const axiosError = imgErr as { response?: { data?: { message?: string; errors?: { image?: string[] } } } };
+                    const errorMessage = axiosError.response?.data?.message 
+                        || axiosError.response?.data?.errors?.image?.[0] 
+                        || t('map.error_uploading_images', 'Some images failed to upload');
+                    
+                    error(errorMessage, t('map.error', 'Error'));
+                }
+            } else {
+                success(t('map.point_created', 'Point created successfully'), t('map.success', 'Success'));
+            }
+            
+            setPoints(prev => [...prev, newPoint]);
         } catch (err) {
             console.error('Error creating point:', err);
             error(t('map.error_creating_point', 'Error creating point'), t('map.error', 'Error'));
@@ -361,6 +411,26 @@ export default function DashboardMap() {
                                         {point.description}
                                     </p>
                                 )}
+                                
+                                {/* Images */}
+                                {point.images && point.images.length > 0 && (
+                                    <div className="flex gap-1 mt-2 overflow-x-auto">
+                                        {point.images.map((image) => (
+                                            <img
+                                                key={image.id}
+                                                src={image.url}
+                                                alt="Point image"
+                                                className="h-16 w-auto object-cover rounded cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
+                                                style={{ maxWidth: '20vw' }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedImage(image.url);
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+                                
                                 <p className="text-xs text-gray-500 mt-2">
                                     {t('map.created_by', 'Created by')}: {point.user.name}
                                 </p>
@@ -413,7 +483,8 @@ export default function DashboardMap() {
                             data.type,
                             '',
                             // store fetched address from dialog
-                            data.description
+                            data.description,
+                            data.images
                         );
                     }
                     setDialogOpen(false);
@@ -431,6 +502,14 @@ export default function DashboardMap() {
                     }
                 }}
             />
+            
+            {/* Image Viewer Overlay */}
+            {selectedImage && (
+                <ImageViewer
+                    imageUrl={selectedImage}
+                    onClose={() => setSelectedImage(null)}
+                />
+            )}
         </div>
     );
 }

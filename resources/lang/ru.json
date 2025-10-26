@@ -137,5 +137,13 @@
     "map.title": "Заголовок",
     "map.title_placeholder": "Введите заголовок (до 255 символов)",
     "map.delete_point_title": "Удалить точку",
-    "map.delete_point_description": "Вы уверены, что хотите удалить эту точку? Это действие нельзя отменить."
+    "map.delete_point_description": "Вы уверены, что хотите удалить эту точку? Это действие нельзя отменить.",
+    "map.photos": "Фотографии",
+    "map.add_photos": "Добавить фото",
+    "map.error_not_image": "Разрешены только файлы изображений",
+    "map.error_wrong_format": "Разрешены только форматы JPEG и PNG",
+    "map.error_file_too_large": "Размер файла не должен превышать 5 МБ",
+    "map.error_max_images": "Максимум 3 изображения разрешено",
+    "map.point_created_with_images": "Точка и изображения успешно созданы",
+    "map.error_uploading_images": "Некоторые изображения не удалось загрузить"
 }

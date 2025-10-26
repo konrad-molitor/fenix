@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Camera, Video } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { X, ImagePlus } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
+import { useNotification } from '@/hooks/use-notification';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ interface AddPointDialogProps {
     onOpenChange: (open: boolean) => void;
     position: Position | null;
     onGetAddress?: (lat: number, lng: number) => Promise<string>;
-    onSave?: (data: { title: string; type: string; description?: string }) => void;
+    onSave?: (data: { title: string; type: string; description?: string; images?: File[] }) => void;
 }
 
 type EventType = 'incident' | 'crime' | 'event';
@@ -30,10 +31,17 @@ const eventTypes: { type: EventType; color: 'orange' | 'destructive' | 'secondar
 
 export function AddPointDialog({ open, onOpenChange, position, onGetAddress, onSave }: AddPointDialogProps) {
     const { t } = useTranslation();
+    const { error } = useNotification();
     const [selectedType, setSelectedType] = useState<EventType | null>(null);
     const [title, setTitle] = useState('');
     const [address, setAddress] = useState<string>('');
     const [loadingAddress, setLoadingAddress] = useState(false);
+    const [selectedImages, setSelectedImages] = useState<File[]>([]);
+    const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const MAX_IMAGES = 3;
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     // Load address when dialog opens
     useEffect(() => {
@@ -48,6 +56,67 @@ export function AddPointDialog({ open, onOpenChange, position, onGetAddress, onS
         }
     }, [open, position, onGetAddress]);
 
+    const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        
+        const validFiles: File[] = [];
+        const errors: string[] = [];
+        
+        files.forEach(file => {
+            if (!allowedTypes.includes(file.type.toLowerCase())) {
+                errors.push(`${file.name}: ${t('map.error_wrong_format', 'Only JPEG and PNG formats are allowed')}`);
+                return;
+            }
+            if (file.size > MAX_FILE_SIZE) {
+                errors.push(`${file.name}: ${t('map.error_file_too_large', 'File size must be less than 5MB')}`);
+                return;
+            }
+            validFiles.push(file);
+        });
+        
+        if (errors.length > 0) {
+            errors.forEach(err => error(err, t('map.error', 'Error')));
+        }
+
+        const remainingSlots = MAX_IMAGES - selectedImages.length;
+        const filesToAdd = validFiles.slice(0, remainingSlots);
+
+        if (filesToAdd.length < validFiles.length) {
+            error(t('map.error_max_images', `Maximum ${MAX_IMAGES} images allowed`), t('map.error', 'Error'));
+        }
+
+        Promise.all(
+            filesToAdd.map(file => {
+                return new Promise<string>((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        resolve(e.target?.result as string);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            })
+        ).then((newPreviews) => {
+            setImagePreviews(prev => [...prev, ...newPreviews]);
+        }).catch((err) => {
+            console.error('Error reading image files:', err);
+            error(t('map.error', 'Error reading image files'), t('map.error', 'Error'));
+        });
+
+        setSelectedImages(prev => [...prev, ...filesToAdd]);
+        
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    const handleRemoveImage = (index: number) => {
+        setSelectedImages(prev => prev.filter((_, i) => i !== index));
+        setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    };
+
     const handleSave = () => {
         if (!position || !selectedType || !title.trim()) {
             return;
@@ -58,18 +127,23 @@ export function AddPointDialog({ open, onOpenChange, position, onGetAddress, onS
                 title: title.trim(),
                 type: selectedType,
                 description: address || `${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}`,
+                images: selectedImages,
             });
         }
 
         // Reset form
         setSelectedType(null);
         setTitle('');
+        setSelectedImages([]);
+        setImagePreviews([]);
         onOpenChange(false);
     };
 
     const handleClose = () => {
         setSelectedType(null);
         setTitle('');
+        setSelectedImages([]);
+        setImagePreviews([]);
         onOpenChange(false);
     };
 
@@ -132,31 +206,55 @@ export function AddPointDialog({ open, onOpenChange, position, onGetAddress, onS
                         </div>
                     </div>
 
-                    {/* Attachment Buttons */}
+                    {/* Image Upload */}
                     <div className="space-y-2">
-                        <Label>{t('map.attachments', 'Attachments')}</Label>
-                        <div className="flex gap-2">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                disabled
-                                className="opacity-50"
-                            >
-                                <Camera className="h-4 w-4" />
-                                <span className="sr-only">{t('map.attach_photo', 'Attach photo')}</span>
-                            </Button>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                disabled
-                                className="opacity-50"
-                            >
-                                <Video className="h-4 w-4" />
-                                <span className="sr-only">{t('map.attach_video', 'Attach video')}</span>
-                            </Button>
-                        </div>
+                        <Label>{t('map.photos', 'Photos')} ({selectedImages.length}/{MAX_IMAGES})</Label>
+                        
+                        {/* Image Previews */}
+                        {imagePreviews.length > 0 && (
+                            <div className="grid grid-cols-3 gap-2 mb-2">
+                                {imagePreviews.map((preview, index) => (
+                                    <div key={index} className="relative group">
+                                        <img 
+                                            src={preview} 
+                                            alt={`Preview ${index + 1}`}
+                                            className="w-full h-20 object-cover rounded-md border"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveImage(index)}
+                                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            <X className="h-3 w-3" />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        
+                        {/* Upload Button */}
+                        {selectedImages.length < MAX_IMAGES && (
+                            <>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/jpg"
+                                    multiple
+                                    onChange={handleImageSelect}
+                                    className="hidden"
+                                />
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="w-full"
+                                >
+                                    <ImagePlus className="h-4 w-4 mr-2" />
+                                    {t('map.add_photos', 'Add photos')} (max 3, 5MB each)
+                                </Button>
+                            </>
+                        )}
                     </div>
 
                     {/* Title Input */}

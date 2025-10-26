@@ -21,7 +21,7 @@ class PointController extends Controller
             'ne_lng' => 'required|numeric|between:-180,180',
         ]);
 
-        $points = Point::with('user:id,name')
+        $points = Point::with(['user:id,name', 'images'])
             ->withinBounds(
                 $request->sw_lat,
                 $request->sw_lng,
@@ -42,6 +42,10 @@ class PointController extends Controller
                         'id' => $point->user->id,
                         'name' => $point->user->name,
                     ],
+                    'images' => $point->images->map(fn($img) => [
+                        'id' => $img->id,
+                        'url' => $img->url,
+                    ]),
                     'is_own' => $point->user_id === Auth::id(),
                     'created_at' => $point->created_at,
                 ];
@@ -86,6 +90,7 @@ class PointController extends Controller
                 'id' => Auth::user()->id,
                 'name' => Auth::user()->name,
             ],
+            'images' => [],
             'is_own' => true,
             'created_at' => $point->created_at,
         ], 201);

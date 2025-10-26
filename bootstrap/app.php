@@ -26,6 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
+
+        $middleware->alias([
+            'storage.limit' => \App\Http\Middleware\CheckStorageLimit::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

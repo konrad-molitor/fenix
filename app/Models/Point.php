@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Point extends Model
 {
@@ -32,6 +33,14 @@ class Point extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the images for the point.
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(PointImage::class)->orderBy('created_at');
     }
 
     /**
@@ -68,6 +77,12 @@ class Point extends Model
             if ($point->latitude && $point->longitude) {
                 $point->location = \DB::raw("ST_GeomFromText('POINT({$point->longitude} {$point->latitude})', 4326)");
             }
+        });
+
+        static::deleting(function ($point) {
+            $point->images()->each(function ($image) {
+                $image->delete();
+            });
         });
     }
 }

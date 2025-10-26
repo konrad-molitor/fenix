@@ -164,6 +164,45 @@ git add resources/js/routes resources/js/actions resources/js/wayfinder
 git commit -m "chore(wayfinder): regenerate routes/actions"
 ```
 
+## 📸 Image Uploads (Tigris Object Storage)
+
+The application supports uploading images for incident reports using Tigris Object Storage (Fly.io).
+
+### Quick Setup:
+
+1. Create a public Tigris bucket:
+```bash
+fly storage create --public
+```
+
+2. Add credentials to `.env`:
+```env
+AWS_ACCESS_KEY_ID=tid_xxxxxxxxxxxxx
+AWS_SECRET_ACCESS_KEY=tsec_xxxxxxxxxxxxx
+AWS_BUCKET=your-bucket-name
+AWS_ENDPOINT=https://fly.storage.tigris.dev
+AWS_USE_PATH_STYLE_ENDPOINT=true
+```
+
+3. Run migrations:
+```bash
+php artisan migrate
+```
+
+### PoC Limits:
+- **5 MB** per file
+- **3 images** per point
+- **10 uploads** per user per day
+- **500 MB** total storage
+- **3 uploads/min** rate limit
+
+### Monitoring:
+```bash
+php artisan app:storage-usage
+```
+
+---
+
 ## Deployment (Fly.io)
 
 Runtime is started by FrankenPHP:
