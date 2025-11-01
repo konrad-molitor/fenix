@@ -14,13 +14,13 @@ The main goals are:
 
 ## Key Features
 
-*   📝 **Report Submission:** Create reports with descriptions, categories, geolocation, and multimedia evidence (photos, videos).
-*   🗺️ **Interactive Map:** View and filter reports on a map.
-*   🔔 **Real-time Notifications:** Citizens receive automatic updates (email, push, SMS) as their report's status changes.
-*   🔐 **Role-Based Access Control (RBAC):** User roles system with `user` (default) and `admin` roles. Admins are automatically promoted via `ADMIN_EMAIL` environment variable.
-*   📊 **Analytics Dashboard:** Internal dashboard for supervisors with statistics, heatmaps, and charts on report resolution times and volumes.
-*   🔒 **Security-First Design:** Built with a strong focus on data security, privacy, and system integrity.
-*   ♿ **Accessibility:** Designed to comply with WCAG 2.1 standards for digital accessibility.
+*   **Report Submission:** Create reports with descriptions, categories, geolocation, and multimedia evidence (photos, videos).
+*   **Interactive Map:** View and filter reports on a map.
+*   **Real-time Notifications:** Citizens receive automatic updates (email, push, SMS) as their report's status changes.
+*   **Role-Based Access Control (RBAC):** User roles system with `user` (default) and `admin` roles. Admins are automatically promoted via `ADMIN_EMAIL` environment variable.
+*   **Analytics Dashboard:** Internal dashboard for supervisors with statistics, heatmaps, and charts on report resolution times and volumes.
+*   **Security-First Design:** Built with a strong focus on data security, privacy, and system integrity.
+*   **Accessibility:** Designed to comply with WCAG 2.1 standards for digital accessibility.
 
 ## Tech Stack
 
@@ -170,12 +170,19 @@ git add resources/js/routes resources/js/actions resources/js/wayfinder
 git commit -m "chore(wayfinder): regenerate routes/actions"
 ```
 
-## 👥 User Roles & Admin Bootstrap
+## User Roles & Admin Access
 
 The application implements a role-based access control system with two roles:
 
 - **`user`** (default): Regular application users
-- **`admin`**: Administrators with elevated permissions
+- **`admin`**: Administrators with elevated permissions and access to Admin Panel
+
+### Admin Panel
+
+Administrators have access to `/admin` with the following sections:
+
+- **Users Management**: View, edit, change roles, set passwords, and delete users
+- **Future sections**: Event moderation, system settings, etc.
 
 ### Auto-promoting the First Admin
 
@@ -209,9 +216,31 @@ if ($user->isAdmin()) {
 $user->promoteToAdmin();
 
 // Create admin in tests/seeders
-User::factory()->admin()->create([
-    'email' => 'test@admin.com'
-]);
+User::factory()->create(['role' => UserRole::ADMIN]);
+```
+
+### Backend Routes
+
+All admin routes are protected by `admin` middleware:
+
+```php
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/', AdminController::class);              // Admin panel dashboard
+    Route::get('/users', [UsersController::class, 'index']); // Users list
+    Route::patch('/users/{user}/role', ...);              // Change user role
+    Route::patch('/users/{user}/profile', ...);           // Update user profile
+    Route::patch('/users/{user}/password', ...);          // Set user password
+    Route::delete('/users/{user}', ...);                  // Delete user
+});
+```
+
+### Testing
+
+Admin functionality is covered by feature tests:
+
+```bash
+php artisan test --filter AdminAuthorizationTest
+php artisan test --filter UserManagementTest
 ```
 
 ### Notes
@@ -221,8 +250,9 @@ User::factory()->admin()->create([
 - Remove or leave empty `ADMIN_EMAIL` to disable auto-promotion
 - The enum `UserRole` is defined in `app/Enums/UserRole.php`
 - Lightweight check: if user not found or already admin, no database writes occur
+- Admin navigation items are automatically shown to users with `admin` role
 
-## 📸 Image Uploads (Tigris Object Storage)
+## Image Uploads (Tigris Object Storage)
 
 The application supports uploading images for incident reports using Tigris Object Storage (Fly.io).
 

@@ -4,13 +4,14 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { useTranslation } from '@/hooks/use-translation';
 import { dashboard } from '@/routes';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { Folder, LayoutGrid } from 'lucide-react';
+import { type NavItem, type SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
+import { Folder, LayoutGrid, Shield } from 'lucide-react';
 import AppLogo from './app-logo';
 
 export function AppSidebar() {
     const { t } = useTranslation();
+    const { auth } = usePage<SharedData>().props;
 
     const mainNavItems: NavItem[] = [
         {
@@ -19,6 +20,15 @@ export function AppSidebar() {
             icon: LayoutGrid,
         },
     ];
+
+    // Add Admin Panel for admins
+    if (auth.user.role === 'admin') {
+        mainNavItems.push({
+            title: t('nav.admin', 'Admin Panel'),
+            href: '/admin',
+            icon: Shield,
+        });
+    }
 
     const footerNavItems: NavItem[] = [
         {
