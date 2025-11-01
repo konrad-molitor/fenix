@@ -38,6 +38,7 @@ export interface User {
     name: string;
     email: string;
     locale?: string | null;
+    role: 'user' | 'admin';
     avatar?: string;
     email_verified_at: string | null;
     created_at: string;

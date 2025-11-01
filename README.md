@@ -17,7 +17,7 @@ The main goals are:
 *   📝 **Report Submission:** Create reports with descriptions, categories, geolocation, and multimedia evidence (photos, videos).
 *   🗺️ **Interactive Map:** View and filter reports on a map.
 *   🔔 **Real-time Notifications:** Citizens receive automatic updates (email, push, SMS) as their report's status changes.
-*   🔐 **Role-Based Access Control (RBAC):** Different user roles with specific permissions (`Citizen`, `Employee`, `Supervisor`, `Administrator`).
+*   🔐 **Role-Based Access Control (RBAC):** User roles system with `user` (default) and `admin` roles. Admins are automatically promoted via `ADMIN_EMAIL` environment variable.
 *   📊 **Analytics Dashboard:** Internal dashboard for supervisors with statistics, heatmaps, and charts on report resolution times and volumes.
 *   🔒 **Security-First Design:** Built with a strong focus on data security, privacy, and system integrity.
 *   ♿ **Accessibility:** Designed to comply with WCAG 2.1 standards for digital accessibility.
@@ -138,11 +138,17 @@ npm ci
 cp .env.example .env
 php artisan key:generate
 ```
-4) Migrate DB (SQLite by default):
+4) **Configure admin user (optional):** Add the email of the user who should be automatically promoted to admin in `.env`:
+```env
+ADMIN_EMAIL=admin@example.com
+```
+When the application boots and finds a user with this email, they will be automatically promoted to admin role (if not already). Leave empty to disable auto-promotion.
+
+5) Migrate DB (SQLite by default):
 ```bash
 php artisan migrate
 ```
-5) Start dev servers:
+6) Start dev servers:
 ```bash
 php artisan serve    # backend
 npm run dev          # Vite
@@ -163,6 +169,58 @@ php artisan wayfinder:generate --with-form
 git add resources/js/routes resources/js/actions resources/js/wayfinder
 git commit -m "chore(wayfinder): regenerate routes/actions"
 ```
+
+## 👥 User Roles & Admin Bootstrap
+
+The application implements a role-based access control system with two roles:
+
+- **`user`** (default): Regular application users
+- **`admin`**: Administrators with elevated permissions
+
+### Auto-promoting the First Admin
+
+To automatically promote a user to admin role on application bootstrap:
+
+1. Add the user's email to `.env`:
+```env
+ADMIN_EMAIL=admin@example.com
+```
+
+2. On every application boot, the system will:
+   - Look for a user with this email
+   - If found and not already admin → promote to admin
+   - If already admin or not found → do nothing
+   - Promotions are logged to `storage/logs/laravel.log`
+
+3. The bootstrap process is idempotent and safe to run multiple times.
+
+### Usage in Code
+
+```php
+use App\Models\User;
+use App\Enums\UserRole;
+
+// Check if user is admin
+if ($user->isAdmin()) {
+    // admin logic
+}
+
+// Manually promote a user
+$user->promoteToAdmin();
+
+// Create admin in tests/seeders
+User::factory()->admin()->create([
+    'email' => 'test@admin.com'
+]);
+```
+
+### Notes
+
+- The bootstrap runs on every application boot (both web requests and console commands)
+- Safe to deploy with `ADMIN_EMAIL` set in production
+- Remove or leave empty `ADMIN_EMAIL` to disable auto-promotion
+- The enum `UserRole` is defined in `app/Enums/UserRole.php`
+- Lightweight check: if user not found or already admin, no database writes occur
 
 ## 📸 Image Uploads (Tigris Object Storage)
 
