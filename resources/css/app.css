@@ -1,3 +1,4 @@
+@import '@radix-ui/themes/styles.css';
 @import 'tailwindcss';
 
 @plugin 'tailwindcss-animate';
@@ -147,6 +148,12 @@
     body {
         @apply bg-background text-foreground;
     }
+}
+
+/* Radix Themes Table: vertical alignment fix */
+.rt-TableCell,
+.rt-TableColumnHeaderCell {
+    vertical-align: middle !important;
 }
 
 /* Leaflet Dark Mode Support */

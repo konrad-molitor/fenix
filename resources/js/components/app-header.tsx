@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Menu, Search, Shield } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
@@ -35,6 +35,16 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
         },
     ];
 
+    // Add Admin Panel for admins
+    const { auth } = page.props;
+    if (auth.user.role === 'admin') {
+        mainNavItems.push({
+            title: t('nav.admin', 'Admin Panel'),
+            href: '/admin',
+            icon: Shield,
+        });
+    }
+
     const rightNavItems: NavItem[] = [
         {
             title: t('nav.repository', 'Repository'),
@@ -47,7 +57,6 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
             icon: BookOpen,
         },
     ];
-    const { auth } = page.props;
     const getInitials = useInitials();
     return (
         <>
