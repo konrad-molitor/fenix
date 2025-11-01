@@ -101,6 +101,35 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                     <InputError className="mt-2" message={errors.locale} />
                                 </div>
 
+                                {auth.user.role === 'admin' && (
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="role">{t('settings.profile.role', 'Role')}</Label>
+
+                                        <Select name="role" defaultValue={auth.user.role}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select role" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="user">
+                                                    {t('settings.profile.role_user', 'User')}
+                                                </SelectItem>
+                                                <SelectItem value="admin">
+                                                    {t('settings.profile.role_admin', 'Administrator')}
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+
+                                        <InputError className="mt-2" message={errors.role} />
+                                        
+                                        <p className="text-sm text-muted-foreground">
+                                            {t(
+                                                'settings.profile.role_description',
+                                                'As an admin, you can change your role. Downgrading to user will remove admin privileges.',
+                                            )}
+                                        </p>
+                                    </div>
+                                )}
+
                                 {mustVerifyEmail && auth.user.email_verified_at === null && (
                                     <div>
                                         <p className="-mt-4 text-sm text-muted-foreground">

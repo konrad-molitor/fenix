@@ -32,6 +32,11 @@ class ProfileController extends Controller
         $user = $request->user();
         $validated = $request->validated();
         
+        // Only allow admins to change role
+        if (!$user->isAdmin()) {
+            unset($validated['role']);
+        }
+        
         $user->fill($validated);
 
         if ($user->isDirty('email')) {

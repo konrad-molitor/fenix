@@ -17,6 +17,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Admin Email
+    |--------------------------------------------------------------------------
+    |
+    | This email address will be automatically promoted to admin role on
+    | application bootstrap if the user exists. Leave empty to disable.
+    |
+    */
+
+    'admin_email' => env('ADMIN_EMAIL'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
