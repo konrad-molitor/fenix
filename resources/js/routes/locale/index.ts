@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../wayfinder'
 /**
 * @see \App\Http\Controllers\LocaleController::switchMethod
 * @see app/Http/Controllers/LocaleController.php:14
@@ -32,28 +32,6 @@ switchMethod.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: switchMethod.url(options),
     method: 'post',
 })
-
-/**
-* @see \App\Http\Controllers\LocaleController::switchMethod
-* @see app/Http/Controllers/LocaleController.php:14
-* @route '/locale/switch'
-*/
-const switchMethodForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: switchMethod.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\LocaleController::switchMethod
-* @see app/Http/Controllers/LocaleController.php:14
-* @route '/locale/switch'
-*/
-switchMethodForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: switchMethod.url(options),
-    method: 'post',
-})
-
-switchMethod.form = switchMethodForm
 
 const locale = {
     switch: switchMethod,
