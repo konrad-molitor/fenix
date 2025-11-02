@@ -244,7 +244,7 @@ export default function AdminUsers({ users, availableRoles }: UsersPageProps) {
             </div>
             
             {/* Edit Profile Dialog (includes role change) */}
-            <Dialog open={dialogType === 'profile'} onOpenChange={closeDialog}>
+            <Dialog open={dialogType === 'profile'} onOpenChange={closeDialog} modal={false}>
                 <DialogContent>
                     <form onSubmit={handleSubmit}>
                         <DialogHeader>

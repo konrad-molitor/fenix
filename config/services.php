@@ -35,4 +35,18 @@ return [
         ],
     ],
 
+    'openrouter' => [
+        'api_key' => env('OPENROUTER_API_KEY'),
+        'models' => [
+            'qwen/qwen2.5-vl-32b-instruct:free',
+            'google/gemini-2.0-flash-exp:free',
+            'google/gemma-2-27b-it:free',
+            'mistralai/mistral-small-latest:free',
+            // Last resort: paid model
+            'google/gemini-2.5-flash-lite-preview-09-2025',
+        ],
+        'base_url' => env('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1'),
+        'retry_delay' => 2, // seconds
+    ],
+
 ];
