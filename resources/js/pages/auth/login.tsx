@@ -10,6 +10,7 @@ import { useTranslation } from '@/hooks/use-translation';
 import AuthLayout from '@/layouts/auth-layout';
 import { register } from '@/routes/index';
 import { request } from '@/routes/password/index';
+import { toFormProps } from '@/utils/route-helpers';
 import { Form, Head } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 
@@ -28,7 +29,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
         >
             <Head title={t('auth.login.title', 'Log in')} />
 
-            <Form {...AuthenticatedSessionController.store.form()} resetOnSuccess={['password']} className="flex flex-col gap-6">
+            <Form {...toFormProps(AuthenticatedSessionController.store())} resetOnSuccess={['password']} className="flex flex-col gap-6">
                 {({ processing, errors }) => (
                     <>
                         <div className="grid gap-6">

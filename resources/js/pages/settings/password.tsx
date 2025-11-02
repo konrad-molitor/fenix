@@ -1,6 +1,7 @@
 import PasswordController from '@/actions/App/Http/Controllers/Settings/PasswordController';
 import InputError from '@/components/input-error';
 import { useTranslation } from '@/hooks/use-translation';
+import { toFormProps } from '@/utils/route-helpers';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { type BreadcrumbItem } from '@/types';
@@ -38,7 +39,7 @@ export default function Password() {
                     />
 
                     <Form
-                        {...PasswordController.update.form()}
+                        {...toFormProps(PasswordController.update())}
                         options={{
                             preserveScroll: true,
                         }}

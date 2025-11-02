@@ -1,6 +1,7 @@
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import { send } from '@/routes/verification';
 import { type BreadcrumbItem, type SharedData } from '@/types';
+import { toFormProps } from '@/utils/route-helpers';
 import { Transition } from '@headlessui/react';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 
@@ -41,7 +42,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                     />
 
                     <Form
-                        {...ProfileController.update.form()}
+                        {...toFormProps(ProfileController.update())}
                         options={{
                             preserveScroll: true,
                         }}

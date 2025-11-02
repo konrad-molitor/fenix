@@ -6,6 +6,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
+import { toFormProps } from '@/utils/route-helpers';
 import { Form } from '@inertiajs/react';
 import { useRef } from 'react';
 
@@ -39,7 +40,7 @@ export default function DeleteUser() {
                         </DialogDescription>
 
                         <Form
-                            {...ProfileController.destroy.form()}
+                            {...toFormProps(ProfileController.destroy())}
                             options={{
                                 preserveScroll: true,
                             }}
