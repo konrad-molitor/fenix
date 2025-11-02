@@ -1,6 +1,7 @@
 // Components
-import EmailVerificationNotificationController from '@/actions/App/Http/Controllers/Auth/EmailVerificationNotificationController.ts';
-import { logout } from '@/routes/index.ts';
+import EmailVerificationNotificationController from '@/actions/App/Http/Controllers/Auth/EmailVerificationNotificationController';
+import { logout } from '@/routes/index';
+import { toFormProps } from '@/utils/route-helpers';
 import { Form, Head } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 
@@ -19,7 +20,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                 </div>
             )}
 
-            <Form {...EmailVerificationNotificationController.store.form()} className="space-y-6 text-center">
+            <Form {...toFormProps(EmailVerificationNotificationController.store())} className="space-y-6 text-center">
                 {({ processing }) => (
                     <>
                         <Button disabled={processing} variant="secondary">

@@ -1,5 +1,6 @@
 import RegisteredUserController from '@/actions/App/Http/Controllers/Auth/RegisteredUserController';
 import { login } from '@/routes/index';
+import { toFormProps } from '@/utils/route-helpers';
 import { Form, Head } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 
@@ -22,7 +23,7 @@ export default function Register() {
         >
             <Head title={t('auth.register.title', 'Register')} />
             <Form
-                {...RegisteredUserController.store.form()}
+                {...toFormProps(RegisteredUserController.store())}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
                 className="flex flex-col gap-6"

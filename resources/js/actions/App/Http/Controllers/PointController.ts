@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\PointController::index
 * @see app/Http/Controllers/PointController.php:15
@@ -42,43 +42,6 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
-
-/**
-* @see \App\Http\Controllers\PointController::index
-* @see app/Http/Controllers/PointController.php:15
-* @route '/api/points'
-*/
-const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\PointController::index
-* @see app/Http/Controllers/PointController.php:15
-* @route '/api/points'
-*/
-indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\PointController::index
-* @see app/Http/Controllers/PointController.php:15
-* @route '/api/points'
-*/
-indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: index.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\PointController::listView
@@ -125,43 +88,6 @@ listView.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Http\Controllers\PointController::listView
-* @see app/Http/Controllers/PointController.php:60
-* @route '/api/points/list-view'
-*/
-const listViewForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: listView.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\PointController::listView
-* @see app/Http/Controllers/PointController.php:60
-* @route '/api/points/list-view'
-*/
-listViewForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: listView.url(options),
-    method: 'get',
-})
-
-/**
-* @see \App\Http\Controllers\PointController::listView
-* @see app/Http/Controllers/PointController.php:60
-* @route '/api/points/list-view'
-*/
-listViewForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-    action: listView.url({
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'HEAD',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'get',
-})
-
-listView.form = listViewForm
-
-/**
 * @see \App\Http\Controllers\PointController::store
 * @see app/Http/Controllers/PointController.php:135
 * @route '/api/points'
@@ -194,28 +120,6 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
-
-/**
-* @see \App\Http\Controllers\PointController::store
-* @see app/Http/Controllers/PointController.php:135
-* @route '/api/points'
-*/
-const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\PointController::store
-* @see app/Http/Controllers/PointController.php:135
-* @route '/api/points'
-*/
-storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: store.url(options),
-    method: 'post',
-})
-
-store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\PointController::destroy
@@ -274,38 +178,6 @@ destroy.delete = (args: { point: number | { id: number } } | [point: number | { 
     url: destroy.url(args, options),
     method: 'delete',
 })
-
-/**
-* @see \App\Http\Controllers\PointController::destroy
-* @see app/Http/Controllers/PointController.php:177
-* @route '/api/points/{point}'
-*/
-const destroyForm = (args: { point: number | { id: number } } | [point: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-/**
-* @see \App\Http\Controllers\PointController::destroy
-* @see app/Http/Controllers/PointController.php:177
-* @route '/api/points/{point}'
-*/
-destroyForm.delete = (args: { point: number | { id: number } } | [point: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-    action: destroy.url(args, {
-        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-            _method: 'DELETE',
-            ...(options?.query ?? options?.mergeQuery ?? {}),
-        }
-    }),
-    method: 'post',
-})
-
-destroy.form = destroyForm
 
 const PointController = { index, listView, store, destroy }
 

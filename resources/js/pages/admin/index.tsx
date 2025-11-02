@@ -7,6 +7,7 @@ import { Theme } from '@radix-ui/themes';
 import AdminUsers from './users';
 import AdminEvents from './events';
 import AdminSystem from './system';
+import AdminEventTypes from './event-types';
 
 interface AdminIndexProps {
     users?: {
@@ -58,6 +59,12 @@ export default function AdminIndex({ users, availableRoles }: AdminIndexProps) {
                         >
                             {translations['admin.system.title']}
                         </Tabs.Trigger>
+                        <Tabs.Trigger
+                            value="event-types"
+                            className="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                        >
+                            {translations['admin.event_types.title']}
+                        </Tabs.Trigger>
                     </Tabs.List>
 
                     <div className="mt-6">
@@ -71,6 +78,9 @@ export default function AdminIndex({ users, availableRoles }: AdminIndexProps) {
                         </Tabs.Content>
                         <Tabs.Content value="system" className="focus-visible:outline-none">
                             <AdminSystem />
+                        </Tabs.Content>
+                        <Tabs.Content value="event-types" className="focus-visible:outline-none">
+                            <AdminEventTypes />
                         </Tabs.Content>
                     </div>
                 </Tabs.Root>
