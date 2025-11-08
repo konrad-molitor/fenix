@@ -35,9 +35,9 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
         },
     ];
 
-    // Add Admin Panel for admins
+    // Add Admin Panel for admins and moderators
     const { auth } = page.props;
-    if (auth.user.role === 'admin') {
+    if (auth.user.role === 'admin' || auth.user.role === 'moderator') {
         mainNavItems.push({
             title: t('nav.admin', 'Admin Panel'),
             href: '/admin',

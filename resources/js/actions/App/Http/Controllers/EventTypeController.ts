@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\EventTypeController::index
 * @see app/Http/Controllers/EventTypeController.php:18
@@ -44,6 +44,43 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
+* @see \App\Http\Controllers\EventTypeController::index
+* @see app/Http/Controllers/EventTypeController.php:18
+* @route '/api/event-types'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\EventTypeController::index
+* @see app/Http/Controllers/EventTypeController.php:18
+* @route '/api/event-types'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\EventTypeController::index
+* @see app/Http/Controllers/EventTypeController.php:18
+* @route '/api/event-types'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
+
+/**
 * @see \App\Http\Controllers\EventTypeController::autocomplete
 * @see app/Http/Controllers/EventTypeController.php:119
 * @route '/api/event-types/autocomplete'
@@ -86,6 +123,43 @@ autocomplete.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: autocomplete.url(options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\EventTypeController::autocomplete
+* @see app/Http/Controllers/EventTypeController.php:119
+* @route '/api/event-types/autocomplete'
+*/
+const autocompleteForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: autocomplete.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\EventTypeController::autocomplete
+* @see app/Http/Controllers/EventTypeController.php:119
+* @route '/api/event-types/autocomplete'
+*/
+autocompleteForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: autocomplete.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\EventTypeController::autocomplete
+* @see app/Http/Controllers/EventTypeController.php:119
+* @route '/api/event-types/autocomplete'
+*/
+autocompleteForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: autocomplete.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+autocomplete.form = autocompleteForm
 
 /**
 * @see \App\Http\Controllers\EventTypeController::show
@@ -156,6 +230,43 @@ show.head = (args: { eventType: number | { id: number } } | [eventType: number |
 })
 
 /**
+* @see \App\Http\Controllers\EventTypeController::show
+* @see app/Http/Controllers/EventTypeController.php:80
+* @route '/api/event-types/{eventType}'
+*/
+const showForm = (args: { eventType: number | { id: number } } | [eventType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\EventTypeController::show
+* @see app/Http/Controllers/EventTypeController.php:80
+* @route '/api/event-types/{eventType}'
+*/
+showForm.get = (args: { eventType: number | { id: number } } | [eventType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\EventTypeController::show
+* @see app/Http/Controllers/EventTypeController.php:80
+* @route '/api/event-types/{eventType}'
+*/
+showForm.head = (args: { eventType: number | { id: number } } | [eventType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+show.form = showForm
+
+/**
 * @see \App\Http\Controllers\EventTypeController::store
 * @see app/Http/Controllers/EventTypeController.php:66
 * @route '/api/event-types'
@@ -188,6 +299,28 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\EventTypeController::store
+* @see app/Http/Controllers/EventTypeController.php:66
+* @route '/api/event-types'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\EventTypeController::store
+* @see app/Http/Controllers/EventTypeController.php:66
+* @route '/api/event-types'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\EventTypeController::update
@@ -252,6 +385,37 @@ update3e206cce5dbe8986698e8d526e57e368.put = (args: { eventType: number | { id: 
 * @see app/Http/Controllers/EventTypeController.php:91
 * @route '/api/event-types/{eventType}'
 */
+const update3e206cce5dbe8986698e8d526e57e368Form = (args: { eventType: number | { id: number } } | [eventType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update3e206cce5dbe8986698e8d526e57e368.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\EventTypeController::update
+* @see app/Http/Controllers/EventTypeController.php:91
+* @route '/api/event-types/{eventType}'
+*/
+update3e206cce5dbe8986698e8d526e57e368Form.put = (args: { eventType: number | { id: number } } | [eventType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update3e206cce5dbe8986698e8d526e57e368.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update3e206cce5dbe8986698e8d526e57e368.form = update3e206cce5dbe8986698e8d526e57e368Form
+/**
+* @see \App\Http\Controllers\EventTypeController::update
+* @see app/Http/Controllers/EventTypeController.php:91
+* @route '/api/event-types/{eventType}'
+*/
 const update3e206cce5dbe8986698e8d526e57e368 = (args: { eventType: number | { id: number } } | [eventType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update3e206cce5dbe8986698e8d526e57e368.url(args, options),
     method: 'patch',
@@ -304,6 +468,38 @@ update3e206cce5dbe8986698e8d526e57e368.patch = (args: { eventType: number | { id
     url: update3e206cce5dbe8986698e8d526e57e368.url(args, options),
     method: 'patch',
 })
+
+/**
+* @see \App\Http\Controllers\EventTypeController::update
+* @see app/Http/Controllers/EventTypeController.php:91
+* @route '/api/event-types/{eventType}'
+*/
+const update3e206cce5dbe8986698e8d526e57e368Form = (args: { eventType: number | { id: number } } | [eventType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update3e206cce5dbe8986698e8d526e57e368.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\EventTypeController::update
+* @see app/Http/Controllers/EventTypeController.php:91
+* @route '/api/event-types/{eventType}'
+*/
+update3e206cce5dbe8986698e8d526e57e368Form.patch = (args: { eventType: number | { id: number } } | [eventType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update3e206cce5dbe8986698e8d526e57e368.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update3e206cce5dbe8986698e8d526e57e368.form = update3e206cce5dbe8986698e8d526e57e368Form
 
 export const update = {
     '/api/event-types/{eventType}': update3e206cce5dbe8986698e8d526e57e368,
@@ -369,6 +565,38 @@ destroy.delete = (args: { eventType: number | { id: number } } | [eventType: num
 })
 
 /**
+* @see \App\Http\Controllers\EventTypeController::destroy
+* @see app/Http/Controllers/EventTypeController.php:105
+* @route '/api/event-types/{eventType}'
+*/
+const destroyForm = (args: { eventType: number | { id: number } } | [eventType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\EventTypeController::destroy
+* @see app/Http/Controllers/EventTypeController.php:105
+* @route '/api/event-types/{eventType}'
+*/
+destroyForm.delete = (args: { eventType: number | { id: number } } | [eventType: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
+
+/**
 * @see \App\Http\Controllers\EventTypeController::generateWithAI
 * @see app/Http/Controllers/EventTypeController.php:149
 * @route '/api/event-types/generate'
@@ -401,6 +629,28 @@ generateWithAI.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => 
     url: generateWithAI.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\EventTypeController::generateWithAI
+* @see app/Http/Controllers/EventTypeController.php:149
+* @route '/api/event-types/generate'
+*/
+const generateWithAIForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: generateWithAI.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\EventTypeController::generateWithAI
+* @see app/Http/Controllers/EventTypeController.php:149
+* @route '/api/event-types/generate'
+*/
+generateWithAIForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: generateWithAI.url(options),
+    method: 'post',
+})
+
+generateWithAI.form = generateWithAIForm
 
 const EventTypeController = { index, autocomplete, show, store, update, destroy, generateWithAI }
 

@@ -15,8 +15,8 @@ class Point extends Model
         'user_id',
         'title',
         'description',
+        'event_type_id',
         'address',
-        'type',
         'latitude',
         'longitude',
         'location',
@@ -36,11 +36,37 @@ class Point extends Model
     }
 
     /**
+     * Get the event type for the point.
+     */
+    public function eventType(): BelongsTo
+    {
+        return $this->belongsTo(EventType::class, 'event_type_id');
+    }
+
+    /**
      * Get the images for the point.
      */
     public function images(): HasMany
     {
         return $this->hasMany(PointImage::class)->orderBy('created_at');
+    }
+
+    /**
+     * Check if all images for this point have been classified.
+     * An image is considered classified if it has a description.
+     */
+    public function areAllImagesClassified(): bool
+    {
+        $totalImages = $this->images()->count();
+        
+        // If no images, consider it as "all classified"
+        if ($totalImages === 0) {
+            return true;
+        }
+        
+        $classifiedImages = $this->images()->whereNotNull('description')->count();
+        
+        return $totalImages === $classifiedImages;
     }
 
     /**

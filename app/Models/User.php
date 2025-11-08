@@ -59,6 +59,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user is a moderator.
+     */
+    public function isModerator(): bool
+    {
+        return $this->role === UserRole::MODERATOR;
+    }
+
+    /**
+     * Check if user is an admin or moderator.
+     */
+    public function isAdminOrModerator(): bool
+    {
+        return $this->role === UserRole::ADMIN || $this->role === UserRole::MODERATOR;
+    }
+
+    /**
      * Promote user to admin role.
      */
     public function promoteToAdmin(): void

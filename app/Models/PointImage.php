@@ -11,6 +11,8 @@ class PointImage extends Model
     protected $fillable = [
         'point_id',
         'user_id',
+        'classified_type',
+        'description',
         'key',
         'mime',
         'size',
@@ -26,6 +28,11 @@ class PointImage extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function classifiedEventType(): BelongsTo
+    {
+        return $this->belongsTo(EventType::class, 'classified_type');
     }
 
     /**

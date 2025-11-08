@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ClassifyPointJob;
 use App\Models\Point;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,12 @@ class PointController extends Controller
             'ne_lng' => 'required|numeric|between:-180,180',
         ]);
 
-        $points = Point::with(['user:id,name', 'images'])
+        $points = Point::with(['user:id,name', 'images', 'eventType'])
+            ->where(function ($query) {
+                // Показываем points с event_type_id ИЛИ созданные текущим пользователем
+                $query->whereNotNull('event_type_id')
+                      ->orWhere('user_id', Auth::id());
+            })
             ->withinBounds(
                 $request->sw_lat,
                 $request->sw_lng,
@@ -35,7 +41,12 @@ class PointController extends Controller
                     'title' => $point->title,
                     'description' => $point->description,
                     'address' => $point->address,
-                    'type' => $point->type,
+                    'event_type_id' => $point->event_type_id,
+                    'event_type' => $point->eventType ? [
+                        'id' => $point->eventType->id,
+                        'system_event_title' => $point->eventType->system_event_title,
+                        'priority' => $point->eventType->priority,
+                    ] : null,
                     'latitude' => $point->latitude,
                     'longitude' => $point->longitude,
                     'user' => [
@@ -67,7 +78,12 @@ class PointController extends Controller
             'exclude_ids.*' => 'integer',
         ]);
 
-        $query = Point::with(['user:id,name', 'images'])
+        $query = Point::with(['user:id,name', 'images', 'eventType'])
+            ->where(function ($query) {
+                // Показываем points с event_type_id ИЛИ созданные текущим пользователем
+                $query->whereNotNull('event_type_id')
+                      ->orWhere('user_id', Auth::id());
+            })
             ->withinSquare(
                 $request->latitude,
                 $request->longitude,
@@ -105,7 +121,12 @@ class PointController extends Controller
                     'title' => $point->title,
                     'description' => $point->description,
                     'address' => $point->address,
-                    'type' => $point->type,
+                    'event_type_id' => $point->event_type_id,
+                    'event_type' => $point->eventType ? [
+                        'id' => $point->eventType->id,
+                        'system_event_title' => $point->eventType->system_event_title,
+                        'priority' => $point->eventType->priority,
+                    ] : null,
                     'latitude' => $point->latitude,
                     'longitude' => $point->longitude,
                     'user' => [
@@ -138,7 +159,7 @@ class PointController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'address' => 'nullable|string|max:255',
-            'type' => 'required|in:incident,crime,event',
+            'event_type_id' => 'nullable|exists:event_types,id',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
         ]);
@@ -148,22 +169,35 @@ class PointController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'address' => $request->address,
-            'type' => $request->type,
+            'event_type_id' => $request->event_type_id,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
         ]);
+
+        $point->load(['eventType', 'user']);
+
+        // Queue point classification if no images (images will trigger it later)
+        // or if event_type_id is not set by user
+        if ($point->images()->count() === 0 && $point->event_type_id === null) {
+            ClassifyPointJob::dispatch($point);
+        }
 
         return response()->json([
             'id' => $point->id,
             'title' => $point->title,
             'description' => $point->description,
             'address' => $point->address,
-            'type' => $point->type,
+            'event_type_id' => $point->event_type_id,
+            'event_type' => $point->eventType ? [
+                'id' => $point->eventType->id,
+                'system_event_title' => $point->eventType->system_event_title,
+                'priority' => $point->eventType->priority,
+            ] : null,
             'latitude' => $point->latitude,
             'longitude' => $point->longitude,
             'user' => [
-                'id' => Auth::user()->id,
-                'name' => Auth::user()->name,
+                'id' => $point->user->id,
+                'name' => $point->user->name,
             ],
             'images' => [],
             'is_own' => true,

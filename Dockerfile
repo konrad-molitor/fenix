@@ -21,6 +21,9 @@ FROM dunglas/frankenphp:1.4-php8.3-bookworm AS runtime
 
 WORKDIR /app
 
+# Install supervisor for managing multiple processes
+RUN apt-get update && apt-get install -y supervisor && rm -rf /var/lib/apt/lists/*
+
 # PHP extensions (required by Laravel)
 RUN install-php-extensions \
     pdo_mysql \
@@ -46,6 +49,9 @@ COPY . /app
 COPY --from=assets /app/resources /app/resources
 COPY --from=assets /app/public/build /app/public/build
 
+# Copy supervisor configuration
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 # Remove stale Laravel caches
 RUN rm -f /app/bootstrap/cache/packages.php /app/bootstrap/cache/services.php /app/bootstrap/cache/config.php /app/bootstrap/cache/routes-*.php || true
 
@@ -70,5 +76,5 @@ EXPOSE 8080
 RUN mkdir -p /app/.infra \
  && printf "opcache.enable=1\nopcache.jit_buffer_size=0\n" > /app/.infra/php.ini
 
-# Start FrankenPHP simple PHP server
-CMD ["frankenphp", "php-server", "-r", "public/", "-l", ":8080"]
+# Start supervisor which will manage both FrankenPHP and queue worker
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

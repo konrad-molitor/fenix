@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\EventType;
 use App\Models\Point;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,7 +24,7 @@ class PointFactory extends Factory
             'title' => fake()->optional()->sentence(3),
             'description' => fake()->optional()->text(100),
             'address' => fake()->optional()->address(),
-            'type' => fake()->randomElement(['incident', 'crime', 'event']),
+            'event_type_id' => EventType::inRandomOrder()->first()?->id, // nullable, связь с event_types
             'latitude' => $lat,
             'longitude' => $lng,
         ];

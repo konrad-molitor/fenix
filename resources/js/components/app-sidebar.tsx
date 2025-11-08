@@ -21,8 +21,8 @@ export function AppSidebar() {
         },
     ];
 
-    // Add Admin Panel for admins
-    if (auth.user.role === 'admin') {
+    // Add Admin Panel for admins and moderators
+    if (auth.user.role === 'admin' || auth.user.role === 'moderator') {
         mainNavItems.push({
             title: t('nav.admin', 'Admin Panel'),
             href: '/admin',
