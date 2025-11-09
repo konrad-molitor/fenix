@@ -28,6 +28,13 @@ class PointController extends Controller
                 $query->whereNotNull('event_type_id')
                       ->orWhere('user_id', Auth::id());
             })
+            ->where(function ($query) {
+                // Фильтрация по moderation_status:
+                // - 'allow' точки показываем всем
+                // - 'filtered' точки показываем только владельцу
+                $query->where('moderation_status', 'allow')
+                      ->orWhere('user_id', Auth::id());
+            })
             ->withinBounds(
                 $request->sw_lat,
                 $request->sw_lng,
@@ -58,6 +65,7 @@ class PointController extends Controller
                         'url' => $img->url,
                     ]),
                     'is_own' => $point->user_id === Auth::id(),
+                    'moderation_status' => $point->moderation_status,
                     'created_at' => $point->created_at,
                 ];
             });
@@ -82,6 +90,13 @@ class PointController extends Controller
             ->where(function ($query) {
                 // Показываем points с event_type_id ИЛИ созданные текущим пользователем
                 $query->whereNotNull('event_type_id')
+                      ->orWhere('user_id', Auth::id());
+            })
+            ->where(function ($query) {
+                // Фильтрация по moderation_status:
+                // - 'allow' точки показываем всем
+                // - 'filtered' точки показываем только владельцу
+                $query->where('moderation_status', 'allow')
                       ->orWhere('user_id', Auth::id());
             })
             ->withinSquare(
@@ -133,6 +148,7 @@ class PointController extends Controller
                         'id' => $point->user->id,
                         'name' => $point->user->name,
                     ],
+                    'moderation_status' => $point->moderation_status,
                     'images' => $point->images->map(fn($img) => [
                         'id' => $img->id,
                         'url' => $img->url,

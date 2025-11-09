@@ -268,5 +268,6 @@
     "admin.event_types.deleted_successfully": "Тип события успешно удалён",
     "admin.event_types.generate_with_ai": "Сгенерировать с помощью ИИ",
     "admin.event_types.generating": "Генерация...",
-    "admin.event_types.ai_error": "Ошибка генерации ИИ"
+    "admin.event_types.ai_error": "Ошибка генерации ИИ",
+    "moderation.filtered": "На модерации"
 }

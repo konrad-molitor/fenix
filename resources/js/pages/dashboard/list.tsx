@@ -1,9 +1,10 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from '@/hooks/use-translation';
 import { useNotification } from '@/hooks/use-notification';
 import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { ImageViewer } from '@/components/map/image-viewer';
 import axios from 'axios';
 
@@ -29,6 +30,7 @@ interface Point {
         url: string;
     }>;
     is_own: boolean;
+    moderation_status: 'allow' | 'filtered';
     created_at: string;
     distance: number; // Distance in meters
 }
@@ -304,12 +306,19 @@ export default function DashboardList() {
                                     <div className="flex justify-between items-start gap-4">
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-start justify-between gap-2 mb-2">
-                                                <h3 className="font-semibold text-lg truncate">
+                                                <h3 className="font-semibold text-lg truncate flex-1">
                                                     {point.title || t('list.untitled_point', 'Untitled Point')}
                                                 </h3>
-                                                <span className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${getTypeColor(point.type)}`}>
-                                                    {getTypeLabel(point.type)}
-                                                </span>
+                                                <div className="flex gap-1 items-center">
+                                                    {point.is_own && point.moderation_status === 'filtered' && (
+                                                        <Badge variant="destructive" className="text-xs">
+                                                            {t('moderation.filtered', 'Filtered')}
+                                                        </Badge>
+                                                    )}
+                                                    <span className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${getTypeColor(point.type)}`}>
+                                                        {getTypeLabel(point.type)}
+                                                    </span>
+                                                </div>
                                             </div>
                                             
                                             {point.address && (

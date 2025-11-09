@@ -83,7 +83,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\PointController::listView
-* @see app/Http/Controllers/PointController.php:71
+* @see app/Http/Controllers/PointController.php:79
 * @route '/api/points/list-view'
 */
 export const listView = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -98,7 +98,7 @@ listView.definition = {
 
 /**
 * @see \App\Http\Controllers\PointController::listView
-* @see app/Http/Controllers/PointController.php:71
+* @see app/Http/Controllers/PointController.php:79
 * @route '/api/points/list-view'
 */
 listView.url = (options?: RouteQueryOptions) => {
@@ -107,7 +107,7 @@ listView.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PointController::listView
-* @see app/Http/Controllers/PointController.php:71
+* @see app/Http/Controllers/PointController.php:79
 * @route '/api/points/list-view'
 */
 listView.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -117,7 +117,7 @@ listView.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\PointController::listView
-* @see app/Http/Controllers/PointController.php:71
+* @see app/Http/Controllers/PointController.php:79
 * @route '/api/points/list-view'
 */
 listView.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -127,7 +127,7 @@ listView.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\PointController::listView
-* @see app/Http/Controllers/PointController.php:71
+* @see app/Http/Controllers/PointController.php:79
 * @route '/api/points/list-view'
 */
 const listViewForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -137,7 +137,7 @@ const listViewForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> =
 
 /**
 * @see \App\Http\Controllers\PointController::listView
-* @see app/Http/Controllers/PointController.php:71
+* @see app/Http/Controllers/PointController.php:79
 * @route '/api/points/list-view'
 */
 listViewForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -147,7 +147,7 @@ listViewForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => 
 
 /**
 * @see \App\Http\Controllers\PointController::listView
-* @see app/Http/Controllers/PointController.php:71
+* @see app/Http/Controllers/PointController.php:79
 * @route '/api/points/list-view'
 */
 listViewForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -164,7 +164,7 @@ listView.form = listViewForm
 
 /**
 * @see \App\Http\Controllers\PointController::store
-* @see app/Http/Controllers/PointController.php:156
+* @see app/Http/Controllers/PointController.php:172
 * @route '/api/points'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -179,7 +179,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\PointController::store
-* @see app/Http/Controllers/PointController.php:156
+* @see app/Http/Controllers/PointController.php:172
 * @route '/api/points'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -188,7 +188,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\PointController::store
-* @see app/Http/Controllers/PointController.php:156
+* @see app/Http/Controllers/PointController.php:172
 * @route '/api/points'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -198,7 +198,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\PointController::store
-* @see app/Http/Controllers/PointController.php:156
+* @see app/Http/Controllers/PointController.php:172
 * @route '/api/points'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -208,7 +208,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\PointController::store
-* @see app/Http/Controllers/PointController.php:156
+* @see app/Http/Controllers/PointController.php:172
 * @route '/api/points'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -220,7 +220,7 @@ store.form = storeForm
 
 /**
 * @see \App\Http\Controllers\PointController::destroy
-* @see app/Http/Controllers/PointController.php:211
+* @see app/Http/Controllers/PointController.php:227
 * @route '/api/points/{point}'
 */
 export const destroy = (args: { point: number | { id: number } } | [point: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -235,7 +235,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\PointController::destroy
-* @see app/Http/Controllers/PointController.php:211
+* @see app/Http/Controllers/PointController.php:227
 * @route '/api/points/{point}'
 */
 destroy.url = (args: { point: number | { id: number } } | [point: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -268,7 +268,7 @@ destroy.url = (args: { point: number | { id: number } } | [point: number | { id:
 
 /**
 * @see \App\Http\Controllers\PointController::destroy
-* @see app/Http/Controllers/PointController.php:211
+* @see app/Http/Controllers/PointController.php:227
 * @route '/api/points/{point}'
 */
 destroy.delete = (args: { point: number | { id: number } } | [point: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -278,7 +278,7 @@ destroy.delete = (args: { point: number | { id: number } } | [point: number | { 
 
 /**
 * @see \App\Http\Controllers\PointController::destroy
-* @see app/Http/Controllers/PointController.php:211
+* @see app/Http/Controllers/PointController.php:227
 * @route '/api/points/{point}'
 */
 const destroyForm = (args: { point: number | { id: number } } | [point: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -293,7 +293,7 @@ const destroyForm = (args: { point: number | { id: number } } | [point: number |
 
 /**
 * @see \App\Http\Controllers\PointController::destroy
-* @see app/Http/Controllers/PointController.php:211
+* @see app/Http/Controllers/PointController.php:227
 * @route '/api/points/{point}'
 */
 destroyForm.delete = (args: { point: number | { id: number } } | [point: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({

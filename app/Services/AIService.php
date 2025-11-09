@@ -269,8 +269,8 @@ class AIService
                         break;
                     }
 
-                    if (!isset($result['description'])) {
-                        $errors[] = "Model {$model} - Invalid response structure (missing description)";
+                    if (!isset($result['description']) || !isset($result['moderation_status'])) {
+                        $errors[] = "Model {$model} - Invalid response structure (missing description or moderation_status)";
                         break;
                     }
 
@@ -283,10 +283,19 @@ class AIService
                         break;
                     }
 
+                    // Validate moderation_status
+                    $moderationStatus = $result['moderation_status'] ?? 'allow';
+                    if (!in_array($moderationStatus, ['allow', 'filtered'])) {
+                        $errors[] = "Model {$model} - Invalid moderation_status: {$moderationStatus}";
+                        break;
+                    }
+
                     // Success! Return the result
                     return [
                         'classified_type_id' => $classifiedTypeId,
                         'description' => trim($result['description']),
+                        'moderation_status' => $moderationStatus,
+                        'moderation_reason' => $result['moderation_reason'] ?? null,
                     ];
 
                 } catch (\Exception $e) {
@@ -505,34 +514,65 @@ PROMPT;
         }
 
         return <<<PROMPT
-You are analyzing a citizen report image. Your task is to:
+You are analyzing a citizen report image. Your tasks are:
 
-1. Identify what is shown in the image
-2. Select the MOST appropriate event type from the list below (or return null if none match)
-3. Write a SHORT description (max 100 characters) of what you see
+1. **Content Moderation**: Check if the image is appropriate for a civic reporting platform
+2. **Classification**: Identify what is shown and match to event type (if appropriate)
+3. **Description**: Write a SHORT description (max 100 characters) of what you see
 
 Available event types:
 {$typesText}
 
-Important rules:
-- If the image clearly matches one of the event types, return its ID
-- If NO event type is appropriate, return null for classified_type_id
-- Keep the description concise but informative
-- Description should be in English
+**Moderation Rules** (set moderation_status):
+- **filtered**: NSFW/explicit content, spam/ads, anime/cartoon/virtual/AI-generated characters, memes, off-topic content, low quality/unclear images, violent/disturbing content
+- **allow**: Real photos of urban infrastructure issues, accidents, civic problems, public safety concerns
+
+**Classification Rules**:
+- If image is **filtered**, still provide description but set classified_type_id to null
+- If image is **allow**: match to event type ID or null if no match
+- Description should be concise and in English
 - Respond ONLY with valid JSON, no markdown code blocks
 
-Example responses:
-
-For a broken bench image:
+**Response format**:
 {
-  "classified_type_id": 5,
-  "description": "Wooden park bench with broken backrest"
+  "classified_type_id": <number or null>,
+  "description": "<short description>",
+  "moderation_status": "allow" | "filtered",
+  "moderation_reason": "<brief reason if filtered, otherwise null>"
 }
 
-For an unclear/unrelated image:
+**Examples**:
+
+Real infrastructure issue (allow):
+{
+  "classified_type_id": 5,
+  "description": "Wooden park bench with broken backrest",
+  "moderation_status": "allow",
+  "moderation_reason": null
+}
+
+Spam/advertisement (filtered):
 {
   "classified_type_id": null,
-  "description": "Image shows a person standing on street"
+  "description": "Advertisement poster for commercial product",
+  "moderation_status": "filtered",
+  "moderation_reason": "spam/ads"
+}
+
+Anime character (filtered):
+{
+  "classified_type_id": null,
+  "description": "Cartoon anime character illustration",
+  "moderation_status": "filtered",
+  "moderation_reason": "anime/virtual"
+}
+
+NSFW content (filtered):
+{
+  "classified_type_id": null,
+  "description": "Explicit content",
+  "moderation_status": "filtered",
+  "moderation_reason": "nsfw"
 }
 
 Now analyze this image and respond with JSON:

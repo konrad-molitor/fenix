@@ -45,32 +45,47 @@ class ClassifyPointImageJob implements ShouldQueue
                 'attempt' => $this->attempts(),
             ]);
 
-            // Classify image using AI
+            // Classify image using AI (includes moderation)
             $result = $aiService->classifyImage(
                 $this->pointImage->url,
                 $this->pointImage->point_id
             );
 
-            // Update point image with classification results
+            // Update point image with classification and moderation results
             $this->pointImage->update([
                 'classified_type' => $result['classified_type_id'],
                 'description' => $result['description'],
+                'moderation_status' => $result['moderation_status'],
+                'moderation_reason' => $result['moderation_reason'],
             ]);
 
-            Log::info('Image classification completed', [
+            Log::info('Image classification and moderation completed', [
                 'point_image_id' => $this->pointImage->id,
                 'classified_type' => $result['classified_type_id'],
                 'description' => $result['description'],
+                'moderation_status' => $result['moderation_status'],
+                'moderation_reason' => $result['moderation_reason'],
             ]);
 
-            // Check if this was the last image to be classified
-            // If so, dispatch point classification
+            // Update point moderation status based on images
             $point = $this->pointImage->point;
-            if ($point && $point->areAllImagesClassified() && $point->event_type_id === null) {
-                Log::info('All images classified, dispatching point classification', [
-                    'point_id' => $point->id,
-                ]);
-                ClassifyPointJob::dispatch($point);
+            if ($point) {
+                $point->updateModerationStatus();
+                
+                // Check if this was the last image to be classified
+                // If so, dispatch point classification ONLY if moderation is 'allow'
+                if ($point->areAllImagesClassified() && 
+                    $point->event_type_id === null && 
+                    $point->moderation_status === 'allow') {
+                    Log::info('All images classified and moderation passed, dispatching point classification', [
+                        'point_id' => $point->id,
+                    ]);
+                    ClassifyPointJob::dispatch($point);
+                } elseif ($point->moderation_status === 'filtered') {
+                    Log::info('Point has filtered images, skipping point classification', [
+                        'point_id' => $point->id,
+                    ]);
+                }
             }
 
         } catch (\Exception $e) {

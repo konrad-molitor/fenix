@@ -13,6 +13,8 @@ class PointImage extends Model
         'user_id',
         'classified_type',
         'description',
+        'moderation_status',
+        'moderation_reason',
         'key',
         'mime',
         'size',

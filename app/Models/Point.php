@@ -16,6 +16,7 @@ class Point extends Model
         'title',
         'description',
         'event_type_id',
+        'moderation_status',
         'address',
         'latitude',
         'longitude',
@@ -67,6 +68,20 @@ class Point extends Model
         $classifiedImages = $this->images()->whereNotNull('description')->count();
         
         return $totalImages === $classifiedImages;
+    }
+
+    /**
+     * Update point moderation status based on images.
+     * If any image is 'filtered', the point is 'filtered'.
+     * Otherwise, the point is 'allow'.
+     */
+    public function updateModerationStatus(): void
+    {
+        $hasFiltered = $this->images()->where('moderation_status', 'filtered')->exists();
+        
+        $this->update([
+            'moderation_status' => $hasFiltered ? 'filtered' : 'allow',
+        ]);
     }
 
     /**

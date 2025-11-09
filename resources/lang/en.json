@@ -268,5 +268,6 @@
     "admin.event_types.deleted_successfully": "Event type deleted successfully",
     "admin.event_types.generate_with_ai": "Generate with AI",
     "admin.event_types.generating": "Generating...",
-    "admin.event_types.ai_error": "AI generation failed"
+    "admin.event_types.ai_error": "AI generation failed",
+    "moderation.filtered": "Filtered"
 }
