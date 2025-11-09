@@ -72,9 +72,12 @@ ENV APP_ENV=production \
 # Expose web port for fly
 EXPOSE 8080
 
-# (optional) PHP ini tweaks
-RUN mkdir -p /app/.infra \
- && printf "opcache.enable=1\nopcache.jit_buffer_size=0\n" > /app/.infra/php.ini
+# PHP ini tweaks
+RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \
+ && echo "opcache.jit_buffer_size=0" >> /usr/local/etc/php/conf.d/opcache.ini \
+ && echo "memory_limit=200M" >> /usr/local/etc/php/conf.d/custom.ini \
+ && echo "post_max_size=20M" >> /usr/local/etc/php/conf.d/custom.ini \
+ && echo "upload_max_filesize=20M" >> /usr/local/etc/php/conf.d/custom.ini
 
 # Start supervisor which will manage both FrankenPHP and queue worker
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
