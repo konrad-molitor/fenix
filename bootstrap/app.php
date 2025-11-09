@@ -35,6 +35,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'storage.limit' => \App\Http\Middleware\CheckStorageLimit::class,
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+            'moderator' => \App\Http\Middleware\EnsureUserIsModerator::class,
+            'admin.or.moderator' => \App\Http\Middleware\EnsureUserIsAdminOrModerator::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

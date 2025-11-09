@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Admin\UsersController::index
 * @see app/Http/Controllers/Admin/UsersController.php:44
@@ -42,6 +42,43 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\Admin\UsersController::index
+* @see app/Http/Controllers/Admin/UsersController.php:44
+* @route '/admin/users'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UsersController::index
+* @see app/Http/Controllers/Admin/UsersController.php:44
+* @route '/admin/users'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UsersController::index
+* @see app/Http/Controllers/Admin/UsersController.php:44
+* @route '/admin/users'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\Admin\UsersController::updateRole
@@ -102,6 +139,38 @@ updateRole.patch = (args: { user: number | { id: number } } | [user: number | { 
 })
 
 /**
+* @see \App\Http\Controllers\Admin\UsersController::updateRole
+* @see app/Http/Controllers/Admin/UsersController.php:67
+* @route '/admin/users/{user}/role'
+*/
+const updateRoleForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: updateRole.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UsersController::updateRole
+* @see app/Http/Controllers/Admin/UsersController.php:67
+* @route '/admin/users/{user}/role'
+*/
+updateRoleForm.patch = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: updateRole.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+updateRole.form = updateRoleForm
+
+/**
 * @see \App\Http\Controllers\Admin\UsersController::updateProfile
 * @see app/Http/Controllers/Admin/UsersController.php:77
 * @route '/admin/users/{user}/profile'
@@ -158,6 +227,38 @@ updateProfile.patch = (args: { user: number | { id: number } } | [user: number |
     url: updateProfile.url(args, options),
     method: 'patch',
 })
+
+/**
+* @see \App\Http\Controllers\Admin\UsersController::updateProfile
+* @see app/Http/Controllers/Admin/UsersController.php:77
+* @route '/admin/users/{user}/profile'
+*/
+const updateProfileForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: updateProfile.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UsersController::updateProfile
+* @see app/Http/Controllers/Admin/UsersController.php:77
+* @route '/admin/users/{user}/profile'
+*/
+updateProfileForm.patch = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: updateProfile.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+updateProfile.form = updateProfileForm
 
 /**
 * @see \App\Http\Controllers\Admin\UsersController::setPassword
@@ -218,6 +319,38 @@ setPassword.patch = (args: { user: number | { id: number } } | [user: number | {
 })
 
 /**
+* @see \App\Http\Controllers\Admin\UsersController::setPassword
+* @see app/Http/Controllers/Admin/UsersController.php:87
+* @route '/admin/users/{user}/password'
+*/
+const setPasswordForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: setPassword.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UsersController::setPassword
+* @see app/Http/Controllers/Admin/UsersController.php:87
+* @route '/admin/users/{user}/password'
+*/
+setPasswordForm.patch = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: setPassword.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+setPassword.form = setPasswordForm
+
+/**
 * @see \App\Http\Controllers\Admin\UsersController::destroy
 * @see app/Http/Controllers/Admin/UsersController.php:99
 * @route '/admin/users/{user}'
@@ -274,6 +407,38 @@ destroy.delete = (args: { user: number | { id: number } } | [user: number | { id
     url: destroy.url(args, options),
     method: 'delete',
 })
+
+/**
+* @see \App\Http\Controllers\Admin\UsersController::destroy
+* @see app/Http/Controllers/Admin/UsersController.php:99
+* @route '/admin/users/{user}'
+*/
+const destroyForm = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UsersController::destroy
+* @see app/Http/Controllers/Admin/UsersController.php:99
+* @route '/admin/users/{user}'
+*/
+destroyForm.delete = (args: { user: number | { id: number } } | [user: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
 
 const users = {
     index,

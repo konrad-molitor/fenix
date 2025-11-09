@@ -8,6 +8,7 @@ import AdminUsers from './users';
 import AdminEvents from './events';
 import AdminSystem from './system';
 import AdminEventTypes from './event-types';
+import AdminQueue from './queue';
 
 interface AdminIndexProps {
     users?: {
@@ -28,30 +29,43 @@ interface AdminIndexProps {
 }
 
 export default function AdminIndex({ users, availableRoles }: AdminIndexProps) {
-    const { translations } = usePage<SharedData>().props;
+    const { translations, auth } = usePage<SharedData>().props;
+    const userRole = auth.user?.role;
+    const isModerator = userRole === 'moderator';
+    const isAdmin = userRole === 'admin';
 
     return (
         <AppLayout>
             <Theme>
-                <div className="flex flex-col gap-6 p-6">
+                <div className="flex flex-col gap-6 p-6 h-[calc(100vh-4rem)]">
                     <Heading
                         title={translations['admin.title']}
                         description={translations['admin.description']}
                     />
 
-                    <Tabs.Root defaultValue="users" className="w-full">
-                    <Tabs.List className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground">
+                    <Tabs.Root defaultValue={isModerator ? "events" : "users"} className="flex flex-col flex-1 min-h-0">
+                    <Tabs.List className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground flex-shrink-0 w-fit">
+                        {isAdmin && (
                         <Tabs.Trigger
                             value="users"
                             className="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                         >
                             {translations['admin.users.title']}
                         </Tabs.Trigger>
+                        )}
                         <Tabs.Trigger
                             value="events"
                             className="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
                         >
                             {translations['admin.events.title']}
+                        </Tabs.Trigger>
+                        {isAdmin && (
+                            <>
+                                <Tabs.Trigger
+                                    value="queue"
+                                    className="inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                                >
+                                    {translations['admin.queue.title']}
                         </Tabs.Trigger>
                         <Tabs.Trigger
                             value="system"
@@ -65,16 +79,25 @@ export default function AdminIndex({ users, availableRoles }: AdminIndexProps) {
                         >
                             {translations['admin.event_types.title']}
                         </Tabs.Trigger>
+                            </>
+                        )}
                     </Tabs.List>
 
-                    <div className="mt-6">
+                    <div className="mt-6 flex-1 min-h-0 overflow-y-auto">
+                        {isAdmin && (
                         <Tabs.Content value="users" className="focus-visible:outline-none">
                             {users && availableRoles && (
                                 <AdminUsers users={users} availableRoles={availableRoles} />
                             )}
                         </Tabs.Content>
-                        <Tabs.Content value="events" className="focus-visible:outline-none">
+                        )}
+                        <Tabs.Content value="events" className="focus-visible:outline-none h-full">
                             <AdminEvents />
+                        </Tabs.Content>
+                        {isAdmin && (
+                            <>
+                                <Tabs.Content value="queue" className="focus-visible:outline-none">
+                                    <AdminQueue />
                         </Tabs.Content>
                         <Tabs.Content value="system" className="focus-visible:outline-none">
                             <AdminSystem />
@@ -82,6 +105,8 @@ export default function AdminIndex({ users, availableRoles }: AdminIndexProps) {
                         <Tabs.Content value="event-types" className="focus-visible:outline-none">
                             <AdminEventTypes />
                         </Tabs.Content>
+                            </>
+                        )}
                     </div>
                 </Tabs.Root>
                 </div>

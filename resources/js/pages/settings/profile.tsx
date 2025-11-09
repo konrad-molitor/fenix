@@ -114,6 +114,9 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                                 <SelectItem value="user">
                                                     {t('settings.profile.role_user', 'User')}
                                                 </SelectItem>
+                                                <SelectItem value="moderator">
+                                                    {t('settings.profile.role_moderator', 'Moderator')}
+                                                </SelectItem>
                                                 <SelectItem value="admin">
                                                     {t('settings.profile.role_admin', 'Administrator')}
                                                 </SelectItem>

@@ -1,5 +1,7 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
+import events from './events'
 import users from './users'
+import queue from './queue'
 /**
 * @see \App\Http\Controllers\Admin\UsersController::index
 * @see app/Http/Controllers/Admin/UsersController.php:21
@@ -44,9 +46,48 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     method: 'head',
 })
 
+/**
+* @see \App\Http\Controllers\Admin\UsersController::index
+* @see app/Http/Controllers/Admin/UsersController.php:21
+* @route '/admin'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UsersController::index
+* @see app/Http/Controllers/Admin/UsersController.php:21
+* @route '/admin'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Admin\UsersController::index
+* @see app/Http/Controllers/Admin/UsersController.php:21
+* @route '/admin'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
+
 const admin = {
     index,
+    events,
     users,
+    queue,
 }
 
 export default admin

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UploadPointImageRequest;
+use App\Jobs\ClassifyPointImageJob;
 use App\Models\Point;
 use App\Models\PointImage;
 use App\Services\ImageUploadService;
@@ -43,6 +44,14 @@ class PointImageController extends Controller
                 $point,
                 $request->user()->id
             );
+
+            // Dispatch classification job to queue
+            ClassifyPointImageJob::dispatch($image);
+
+            Log::info('Image uploaded and queued for classification', [
+                'point_image_id' => $image->id,
+                'point_id' => $point->id,
+            ]);
 
             return response()->json([
                 'data' => [

@@ -168,7 +168,7 @@ export default function AdminUsers({ users, availableRoles }: UsersPageProps) {
                                 <RadixTable.Cell>{user.email}</RadixTable.Cell>
                                 <RadixTable.Cell>
                                     <Badge 
-                                        variant={user.role === 'admin' ? 'default' : 'secondary'}
+                                        variant={user.role === 'admin' ? 'default' : user.role === 'moderator' ? 'outline' : 'secondary'}
                                         className="min-w-[4rem] justify-center"
                                     >
                                         {user.role}

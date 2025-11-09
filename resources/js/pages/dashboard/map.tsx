@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { useTranslation } from '@/hooks/use-translation';
 import { useNotification } from '@/hooks/use-notification';
 import { Spinner } from '@/components/ui/spinner';
+import { Badge } from '@/components/ui/badge';
 import { AddPointDialog } from '@/components/map/add-point-dialog';
 import { DeletePointDialog } from '@/components/map/delete-point-dialog';
 import { MapContextMenu } from '@/components/map/map-context-menu';
@@ -44,6 +45,7 @@ interface Point {
         url: string;
     }>;
     is_own: boolean;
+    moderation_status: 'allow' | 'filtered' | 'declined';
     created_at: string;
 }
 
@@ -428,9 +430,16 @@ export default function DashboardMap() {
                     >
                         <Popup>
                             <div className="min-w-48">
-                                <h3 className="font-semibold text-sm">
-                                    {point.title || t('map.untitled_point', 'Untitled Point')}
-                                </h3>
+                                <div className="flex items-start justify-between gap-2">
+                                    <h3 className="font-semibold text-sm flex-1">
+                                        {point.title || t('map.untitled_point', 'Untitled Point')}
+                                    </h3>
+                                    {point.is_own && point.moderation_status !== 'allow' && (
+                                        <Badge variant="destructive" className="text-xs">
+                                            {t(`moderation.${point.moderation_status}`, point.moderation_status)}
+                                        </Badge>
+                                    )}
+                                </div>
                                 {point.address && (
                                     <p className="text-xs text-gray-600 mt-1">
                                         {point.address}
