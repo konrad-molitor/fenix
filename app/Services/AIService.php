@@ -527,6 +527,8 @@ Available event types:
 - **filtered**: NSFW/explicit content, spam/ads, anime/cartoon/virtual/AI-generated characters, memes, off-topic content, low quality/unclear images, violent/disturbing content
 - **allow**: Real photos of urban infrastructure issues, accidents, civic problems, public safety concerns
 
+IMPORTANT NOTE: Pay attention to the image context. Crashed car with anime character on it is still a car crash, so it should be classified as "car crash" and allowed. Image displaying advertisement catching fire is still an image of fire, so it should be classified as "fire" and allowed. Only type that should be always filtered is NSFW content.
+
 **Classification Rules**:
 - If image is **filtered**, still provide description but set classified_type_id to null
 - If image is **allow**: match to event type ID or null if no match

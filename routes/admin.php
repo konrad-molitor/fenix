@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\EventsModerationController;
 use App\Http\Controllers\Admin\QueueController;
 use App\Http\Controllers\Admin\UsersController;
 use Illuminate\Support\Facades\Route;
@@ -9,8 +10,12 @@ use Inertia\Inertia;
 Route::middleware(['auth', 'verified', 'admin.or.moderator'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [UsersController::class, 'adminIndex'])->name('index');
     
-    // Events moderation routes will be added here
-    // Route::get('/events', [EventsController::class, 'index'])->name('events.index');
+    // Events moderation routes
+    Route::prefix('events')->name('events.')->group(function () {
+        Route::get('/stats', [EventsModerationController::class, 'stats'])->name('stats');
+        Route::get('/', [EventsModerationController::class, 'index'])->name('index');
+        Route::get('/event-types', [EventsModerationController::class, 'eventTypes'])->name('eventTypes');
+    });
 });
 
 // Routes accessible only by admins

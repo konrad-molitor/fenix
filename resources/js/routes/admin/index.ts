@@ -1,4 +1,5 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../wayfinder'
+import events from './events'
 import users from './users'
 import queue from './queue'
 /**
@@ -84,6 +85,7 @@ index.form = indexForm
 
 const admin = {
     index,
+    events,
     users,
     queue,
 }

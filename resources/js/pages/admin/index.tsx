@@ -37,14 +37,14 @@ export default function AdminIndex({ users, availableRoles }: AdminIndexProps) {
     return (
         <AppLayout>
             <Theme>
-                <div className="flex flex-col gap-6 p-6">
+                <div className="flex flex-col gap-6 p-6 h-[calc(100vh-4rem)]">
                     <Heading
                         title={translations['admin.title']}
                         description={translations['admin.description']}
                     />
 
-                    <Tabs.Root defaultValue={isModerator ? "events" : "users"} className="w-full">
-                    <Tabs.List className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground">
+                    <Tabs.Root defaultValue={isModerator ? "events" : "users"} className="flex flex-col flex-1 min-h-0">
+                    <Tabs.List className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground flex-shrink-0 w-fit">
                         {isAdmin && (
                             <Tabs.Trigger
                                 value="users"
@@ -83,7 +83,7 @@ export default function AdminIndex({ users, availableRoles }: AdminIndexProps) {
                         )}
                     </Tabs.List>
 
-                    <div className="mt-6">
+                    <div className="mt-6 flex-1 min-h-0 overflow-y-auto">
                         {isAdmin && (
                             <Tabs.Content value="users" className="focus-visible:outline-none">
                                 {users && availableRoles && (
@@ -91,7 +91,7 @@ export default function AdminIndex({ users, availableRoles }: AdminIndexProps) {
                                 )}
                             </Tabs.Content>
                         )}
-                        <Tabs.Content value="events" className="focus-visible:outline-none">
+                        <Tabs.Content value="events" className="focus-visible:outline-none h-full">
                             <AdminEvents />
                         </Tabs.Content>
                         {isAdmin && (
