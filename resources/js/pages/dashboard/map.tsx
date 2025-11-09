@@ -45,7 +45,7 @@ interface Point {
         url: string;
     }>;
     is_own: boolean;
-    moderation_status: 'allow' | 'filtered';
+    moderation_status: 'allow' | 'filtered' | 'declined';
     created_at: string;
 }
 
@@ -434,9 +434,9 @@ export default function DashboardMap() {
                                     <h3 className="font-semibold text-sm flex-1">
                                         {point.title || t('map.untitled_point', 'Untitled Point')}
                                     </h3>
-                                    {point.is_own && point.moderation_status === 'filtered' && (
+                                    {point.is_own && point.moderation_status !== 'allow' && (
                                         <Badge variant="destructive" className="text-xs">
-                                            {t('moderation.filtered', 'Filtered')}
+                                            {t(`moderation.${point.moderation_status}`, point.moderation_status)}
                                         </Badge>
                                     )}
                                 </div>

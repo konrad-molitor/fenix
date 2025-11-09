@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,7 @@ import { ReloadIcon, Cross2Icon, MagnifyingGlassIcon } from '@radix-ui/react-ico
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import axios from 'axios';
+import ModerationModal from '@/components/admin/moderation-modal';
 
 interface Point {
     id: number;
@@ -25,7 +26,7 @@ interface Point {
         system_event_title: string;
         priority: string;
     } | null;
-    moderation_status: 'allow' | 'filtered';
+    moderation_status: 'allow' | 'filtered' | 'declined';
     user: {
         id: number;
         name: string;
@@ -34,7 +35,7 @@ interface Point {
         id: number;
         url: string;
         description: string | null;
-        moderation_status: 'allow' | 'filtered';
+        moderation_status: 'allow' | 'filtered' | 'declined';
         moderation_reason: string | null;
     }>;
     created_at: string;
@@ -69,6 +70,8 @@ export default function AdminEvents() {
     const [points, setPoints] = useState<Point[]>([]);
     const [eventTypes, setEventTypes] = useState<EventType[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedPointId, setSelectedPointId] = useState<number | null>(null);
+    const [modalOpen, setModalOpen] = useState(false);
     
     // Filters
     const [search, setSearch] = useState('');
@@ -142,6 +145,7 @@ export default function AdminEvents() {
 
     useEffect(() => {
         fetchPoints(1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search, searchInDescriptions, moderationFilter, selectedEventTypes, orderBy]);
 
     const handleAddEventType = (eventType: EventType) => {
@@ -159,6 +163,30 @@ export default function AdminEvents() {
         et.label.toLowerCase().includes(eventTypeInput.toLowerCase()) &&
         !selectedEventTypes.find(set => set.id === et.id)
     );
+
+    const handleOpenModal = (pointId: number) => {
+        setSelectedPointId(pointId);
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        setSelectedPointId(null);
+    };
+
+    const handleModalUpdate = () => {
+        fetchPoints(currentPage); // Refresh current page
+        fetchStats(); // Refresh stats
+    };
+
+    const fetchStats = async () => {
+        try {
+            const response = await axios.get('/admin/events/stats');
+            setStats(response.data);
+        } catch (error) {
+            console.error('Failed to fetch stats:', error);
+        }
+    };
 
     if (!stats) {
         return (
@@ -214,7 +242,11 @@ export default function AdminEvents() {
                                     </RadixTable.Header>
                                     <RadixTable.Body>
                                         {points.map((point) => (
-                                            <RadixTable.Row key={point.id}>
+                                            <RadixTable.Row 
+                                                key={point.id} 
+                                                className="cursor-pointer hover:bg-accent/50 transition-colors"
+                                                onClick={() => handleOpenModal(point.id)}
+                                            >
                                                 <RadixTable.Cell>
                                                     <div className="max-w-[200px]">
                                                         <div className="font-medium truncate">
@@ -237,11 +269,19 @@ export default function AdminEvents() {
                                                     )}
                                                 </RadixTable.Cell>
                                                 <RadixTable.Cell>
-                                                    <Badge variant={point.moderation_status === 'filtered' ? 'destructive' : 'secondary'}>
-                                                        {point.moderation_status === 'filtered' 
-                                                            ? (translations['moderation.filtered'] || 'Filtered')
-                                                            : (translations['moderation.allowed'] || 'Allowed')
-                                                        }
+                                                    <Badge variant={
+                                                        point.moderation_status === 'allow' 
+                                                            ? 'secondary' 
+                                                            : point.moderation_status === 'filtered'
+                                                            ? 'default'
+                                                            : 'destructive'
+                                                    }
+                                                    className={
+                                                        point.moderation_status === 'filtered'
+                                                            ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                                                            : ''
+                                                    }>
+                                                        {translations[`moderation.${point.moderation_status}`] || point.moderation_status}
                                                     </Badge>
                                                 </RadixTable.Cell>
                                                 <RadixTable.Cell>
@@ -455,6 +495,14 @@ export default function AdminEvents() {
                     </Card>
                 </div>
             </div>
+
+            {/* Moderation Modal */}
+            <ModerationModal
+                open={modalOpen}
+                pointId={selectedPointId}
+                onClose={handleCloseModal}
+                onUpdate={handleModalUpdate}
+            />
         </div>
     );
 }

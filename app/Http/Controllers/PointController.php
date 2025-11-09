@@ -31,7 +31,7 @@ class PointController extends Controller
             ->where(function ($query) {
                 // Фильтрация по moderation_status:
                 // - 'allow' точки показываем всем
-                // - 'filtered' точки показываем только владельцу
+                // - 'filtered' и 'declined' точки показываем только владельцу
                 $query->where('moderation_status', 'allow')
                       ->orWhere('user_id', Auth::id());
             })
@@ -95,7 +95,7 @@ class PointController extends Controller
             ->where(function ($query) {
                 // Фильтрация по moderation_status:
                 // - 'allow' точки показываем всем
-                // - 'filtered' точки показываем только владельцу
+                // - 'filtered' и 'declined' точки показываем только владельцу
                 $query->where('moderation_status', 'allow')
                       ->orWhere('user_id', Auth::id());
             })

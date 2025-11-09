@@ -77,6 +77,11 @@ class Point extends Model
      */
     public function updateModerationStatus(): void
     {
+        // Don't update if point is declined - it should stay declined until moderator approves/declines again
+        if ($this->moderation_status === 'declined') {
+            return;
+        }
+        
         $hasFiltered = $this->images()->where('moderation_status', 'filtered')->exists();
         
         $this->update([

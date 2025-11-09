@@ -9,12 +9,17 @@ use Inertia\Inertia;
 // Routes accessible by both admins and moderators
 Route::middleware(['auth', 'verified', 'admin.or.moderator'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [UsersController::class, 'adminIndex'])->name('index');
-    
+
     // Events moderation routes
     Route::prefix('events')->name('events.')->group(function () {
         Route::get('/stats', [EventsModerationController::class, 'stats'])->name('stats');
         Route::get('/', [EventsModerationController::class, 'index'])->name('index');
         Route::get('/event-types', [EventsModerationController::class, 'eventTypes'])->name('eventTypes');
+        Route::get('/{point}', [EventsModerationController::class, 'show'])->name('show');
+        Route::patch('/{point}/event-type', [EventsModerationController::class, 'updateEventType'])->name('updateEventType');
+        Route::post('/{point}/approve', [EventsModerationController::class, 'approve'])->name('approve');
+        Route::post('/{point}/decline', [EventsModerationController::class, 'decline'])->name('decline');
+        Route::post('/{point}/images/{image}/clear-moderation', [EventsModerationController::class, 'clearImageModeration'])->name('clearImageModeration');
     });
 });
 

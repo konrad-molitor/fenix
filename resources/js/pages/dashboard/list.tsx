@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from '@/hooks/use-translation';
 import { useNotification } from '@/hooks/use-notification';
 import { Spinner } from '@/components/ui/spinner';
@@ -30,7 +30,7 @@ interface Point {
         url: string;
     }>;
     is_own: boolean;
-    moderation_status: 'allow' | 'filtered';
+    moderation_status: 'allow' | 'filtered' | 'declined';
     created_at: string;
     distance: number; // Distance in meters
 }
@@ -105,14 +105,7 @@ export default function DashboardList() {
         }
     }, []);
 
-    // Load initial points
-    useEffect(() => {
-        if (position) {
-            loadPoints();
-        }
-    }, [position]);
-
-    const loadPoints = async () => {
+    const loadPoints = useCallback(async () => {
         if (!position) return;
 
         try {
@@ -133,7 +126,15 @@ export default function DashboardList() {
         } finally {
             setLoading(false);
         }
-    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [position, radius]);
+
+    // Load initial points
+    useEffect(() => {
+        if (position) {
+            loadPoints();
+        }
+    }, [position, loadPoints]);
 
     const loadMore = async () => {
         if (!position || loadingMore || !hasMore) return;
@@ -310,9 +311,9 @@ export default function DashboardList() {
                                                     {point.title || t('list.untitled_point', 'Untitled Point')}
                                                 </h3>
                                                 <div className="flex gap-1 items-center">
-                                                    {point.is_own && point.moderation_status === 'filtered' && (
+                                                    {point.is_own && point.moderation_status !== 'allow' && (
                                                         <Badge variant="destructive" className="text-xs">
-                                                            {t('moderation.filtered', 'Filtered')}
+                                                            {t(`moderation.${point.moderation_status}`, point.moderation_status)}
                                                         </Badge>
                                                     )}
                                                     <span className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${getTypeColor(point.type)}`}>

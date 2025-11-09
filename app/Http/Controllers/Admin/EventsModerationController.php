@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Point;
+use App\Models\PointImage;
 use App\Models\EventType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class EventsModerationController extends Controller
     {
         $totalLast24h = Point::where('created_at', '>=', now()->subDay())->count();
         $filteredLast24h = Point::where('created_at', '>=', now()->subDay())
-            ->where('moderation_status', 'filtered')
+            ->whereIn('moderation_status', ['filtered', 'declined'])
             ->count();
 
         return response()->json([
@@ -68,7 +69,7 @@ class EventsModerationController extends Controller
                 $query->where('moderation_status', 'allow');
                 break;
             case 'only_filtered':
-                $query->where('moderation_status', 'filtered');
+                $query->whereIn('moderation_status', ['filtered', 'declined']);
                 break;
             case 'show_filtered':
             default:
@@ -157,5 +158,136 @@ class EventsModerationController extends Controller
             });
 
         return response()->json($eventTypes);
+    }
+
+    /**
+     * Get detailed point information for moderation modal.
+     */
+    public function show(Point $point): JsonResponse
+    {
+        $point->load(['user:id,name', 'eventType:id,system_event_title,title_display_translation', 'images']);
+
+        return response()->json([
+            'id' => $point->id,
+            'title' => $point->title,
+            'description' => $point->description,
+            'address' => $point->address,
+            'latitude' => $point->latitude,
+            'longitude' => $point->longitude,
+            'event_type_id' => $point->event_type_id,
+            'event_type' => $point->eventType ? [
+                'id' => $point->eventType->id,
+                'system_event_title' => $point->eventType->system_event_title,
+                'title_display_translation' => $point->eventType->title_display_translation,
+            ] : null,
+            'moderation_status' => $point->moderation_status,
+            'user' => [
+                'id' => $point->user->id,
+                'name' => $point->user->name,
+            ],
+            'images' => $point->images->map(function ($img) {
+                return [
+                    'id' => $img->id,
+                    'url' => $img->url,
+                    'classified_type' => $img->classified_type,
+                    'classified_event_type' => $img->classifiedEventType ? [
+                        'id' => $img->classifiedEventType->id,
+                        'system_event_title' => $img->classifiedEventType->system_event_title,
+                        'title_display_translation' => $img->classifiedEventType->title_display_translation,
+                    ] : null,
+                    'description' => $img->description,
+                    'moderation_status' => $img->moderation_status,
+                    'moderation_reason' => $img->moderation_reason,
+                ];
+            }),
+            'created_at' => $point->created_at,
+            'updated_at' => $point->updated_at,
+        ]);
+    }
+
+    /**
+     * Update point event type.
+     */
+    public function updateEventType(Request $request, Point $point): JsonResponse
+    {
+        $request->validate([
+            'event_type_id' => 'required|exists:event_types,id',
+        ]);
+
+        $point->update([
+            'event_type_id' => $request->event_type_id,
+        ]);
+
+        return response()->json([
+            'message' => 'Event type updated successfully',
+        ]);
+    }
+
+    /**
+     * Approve point - clear all filtered/declined statuses.
+     */
+    public function approve(Point $point): JsonResponse
+    {
+        // Update all images to 'allow' and clear moderation_reason
+        $point->images()->update([
+            'moderation_status' => 'allow',
+            'moderation_reason' => null,
+        ]);
+
+        // Update point status
+        $point->update([
+            'moderation_status' => 'allow',
+        ]);
+
+        return response()->json([
+            'message' => 'Point approved successfully',
+        ]);
+    }
+
+    /**
+     * Decline point - set status to 'declined'.
+     */
+    public function decline(Point $point): JsonResponse
+    {
+        // Update all images to 'declined'
+        $point->images()->update([
+            'moderation_status' => 'declined',
+        ]);
+
+        // Update point status
+        $point->update([
+            'moderation_status' => 'declined',
+        ]);
+
+        return response()->json([
+            'message' => 'Point declined successfully',
+        ]);
+    }
+
+    /**
+     * Clear moderation for a specific image.
+     */
+    public function clearImageModeration(Point $point, PointImage $image): JsonResponse
+    {
+        // Ensure image belongs to this point
+        if ($image->point_id !== $point->id) {
+            return response()->json([
+                'message' => 'Image does not belong to this point',
+            ], 403);
+        }
+
+        $image->update([
+            'moderation_status' => 'allow',
+            'moderation_reason' => null,
+        ]);
+
+        // Update point status based on remaining images
+        $point->updateModerationStatus();
+
+        return response()->json([
+            'message' => 'Image moderation cleared successfully',
+            'image' => $image->fresh(['classifiedEventType']),
+            'point_status' => $point->fresh()->moderation_status,
+        ]);
     }
 }
