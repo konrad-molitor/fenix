@@ -10,13 +10,17 @@ COPY vite.config.ts tsconfig.json ./
 RUN npm run build
 
 # --- PHP dependencies ---
+# composer:2 is a floating tag (now PHP 8.5). The vendor stage only downloads
+# packages; the real runtime is PHP 8.3 below, so skip just the PHP version check.
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN --mount=type=cache,target=/tmp/cache composer install --no-dev --no-interaction --no-progress --prefer-dist --optimize-autoloader --no-scripts
+RUN --mount=type=cache,target=/tmp/cache composer install --no-dev --no-interaction --no-progress --prefer-dist --optimize-autoloader --no-scripts --ignore-platform-req=php
 
 # --- Runtime image ---
-FROM dunglas/frankenphp:1.4-php8.3-bookworm AS runtime
+# Pinned to FrankenPHP 1.13.2 = PHP 8.3.36 (fixes CVE-2026-109618 / CVE-2026-109619).
+# The old "1.4-*" tag is frozen and no longer receives PHP security updates.
+FROM dunglas/frankenphp:1.13.2-php8.3-bookworm AS runtime
 # FrankenPHP включает встроенный веб-сервер и PHP-FPM, удобно для fly.io
 
 WORKDIR /app
@@ -77,7 +81,9 @@ RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \
  && echo "opcache.jit_buffer_size=0" >> /usr/local/etc/php/conf.d/opcache.ini \
  && echo "memory_limit=200M" >> /usr/local/etc/php/conf.d/custom.ini \
  && echo "post_max_size=20M" >> /usr/local/etc/php/conf.d/custom.ini \
- && echo "upload_max_filesize=20M" >> /usr/local/etc/php/conf.d/custom.ini
+ && echo "upload_max_filesize=20M" >> /usr/local/etc/php/conf.d/custom.ini \
+ && echo "session.upload_progress.enabled=0" >> /usr/local/etc/php/conf.d/custom.ini \
+ && php -r 'if (version_compare(PHP_VERSION, "8.3.36", "<")) { fwrite(STDERR, "PHP ".PHP_VERSION." is vulnerable to CVE-2026-109618/109619\n"); exit(1); }'
 
 # Start supervisor which will manage both FrankenPHP and queue worker
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
